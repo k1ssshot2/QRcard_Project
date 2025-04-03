@@ -1,1 +1,0 @@
-# QRcard_Project
