@@ -1,6 +1,6 @@
 ---
 name: Bug Report Template
-about: 버그 발생 시 제보를 위한 공동 템플릿
+about: 버그 발생 시 제보 템플릿릿
 title: ''
 labels: ''
 assignees: ''

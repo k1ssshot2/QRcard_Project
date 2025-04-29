@@ -1,6 +1,6 @@
 ---
 name: Feature Add Template
-about: 기능 추가 request를 위한 공동 템플릿
+about: 기능 추가 request 템플릿릿
 title: ''
 labels: ''
 assignees: ''

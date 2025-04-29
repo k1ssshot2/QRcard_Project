@@ -1,6 +1,6 @@
 ---
-name: Feature Request Template
-about: 기능 추가 요청을 위한 공동 템플릿
+name: PULL REQUEST TEMPLATE
+about: PR 템플릿
 title: ''
 labels: ''
 assignees: ''
