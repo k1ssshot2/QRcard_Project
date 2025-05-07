@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "886143574775",
+    "firebase_url": "https://qrcard-e55c8-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "qrcard-e55c8",
+    "storage_bucket": "qrcard-e55c8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886143574775:android:2bc5f561a206b690d569f2",
+        "android_client_info": {
+          "package_name": "com.example.signinpart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpRCteL1oeDvdX-BXvLH3c5kiefZqEu7g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
