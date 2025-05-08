@@ -1,6 +1,6 @@
 ---
 name: Feature Add Template
-about: 기능 추가 request 템플릿릿
+about: PULL REQUEST TEMPLATE
 title: ''
 labels: ''
 assignees: ''
