@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="navColor">#FFFFFFFF</color>
+    <color name="btnActColor">#CEFFFFFF</color>
+    <color name="btnLoginColor">#FF000000</color>
+    <color name="textLoginColor">#FFFFFFFF</color>
+    <color name="screenBackColor">#D0F3F3F3</color>
+    <color name="mainTextColor">#FF000000</color>
+    <color name="sideTextColor">#AEFFFFFF</color>
+    <color name="btnColor">#AEACACAC</color>
+    <color name="editTextBackColor">#FFFFFFFF</color>
+
+
+</resources>
