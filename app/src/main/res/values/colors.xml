@@ -10,6 +10,7 @@
     <color name="mainTextColor">#FF000000</color>
     <color name="sideTextColor">#AEFFFFFF</color>
     <color name="clickedBtnColor">#AEACACAC</color>
-
+    <color name="btnColor">#AEACACAC</color>
+    <color name="editTextBackColor">#FFFFFFFF</color>
 
 </resources>
