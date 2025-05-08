@@ -8,4 +8,6 @@
     <string name="phone">Phone</string>
     <string name="department">Department</string>
     <string name="position">Position</string>
+    <string name="cancel">Cancel</string>
+
 </resources>
