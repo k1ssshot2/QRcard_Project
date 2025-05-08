@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">QRcardProject</string>
     <!-- TODO: Remove or change this placeholder text -->
+
     <string name="save">SAVE</string>
     <string name="add">ADD</string>
     <string name="username">User Name</string>
@@ -9,5 +10,3 @@
     <string name="department">Department</string>
     <string name="position">Position</string>
     <string name="cancel">Cancel</string>
-
-</resources>
