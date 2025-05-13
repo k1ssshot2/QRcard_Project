@@ -33,13 +33,15 @@
                 android:layout_marginBottom="24dp"
                 android:onClick="onProfileImageClick"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_default_pic" />
+                android:src="@drawable/ic_default_pic"
+                android:contentDescription="@string/profile_image_desc"/>
 
             <EditText
                 android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
+                android:minHeight="48dp"
                 android:background="@drawable/edittextshape"
                 android:enabled="true"
                 android:hint="User Name"
@@ -52,6 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
+                android:minHeight="48dp"
                 android:background="@drawable/edittextshape"
                 android:enabled="true"
                 android:hint="user@email.com"
@@ -64,6 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
+                android:minHeight="48dp"
                 android:background="@drawable/edittextshape"
                 android:enabled="true"
                 android:hint="010-0000-0000"
@@ -76,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
+                android:minHeight="48dp"
                 android:background="@drawable/edittextshape"
                 android:enabled="true"
                 android:hint="Department"
@@ -88,6 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
+                android:minHeight="48dp"
                 android:background="@drawable/edittextshape"
                 android:enabled="true"
                 android:hint="Position"
@@ -101,34 +107,30 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:weightSum="2">
-
-                <Button
-                    android:id="@+id/btnKakao"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/etKakao"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/buttonshape"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:paddingStart="12dp"
-                    android:paddingTop="6dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="6dp"
-                    android:text="KakaoTalk" />
+                    android:layout_marginEnd="8dp"
+                    android:minHeight="48dp"
+                    android:background="@drawable/edittextshape"
+                    android:hint="KakaoTalk ID"
+                    android:padding="12dp"
+                    android:textSize="16sp" />
 
-                <Button
-                    android:id="@+id/btnInstagram"
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/etInstagram"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/buttonshape"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
-                    android:paddingStart="12dp"
-                    android:paddingTop="6dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="6dp"
-                    android:text="Instagram" />
+                    android:layout_marginStart="8dp"
+                    android:minHeight="48dp"
+                    android:background="@drawable/edittextshape"
+                    android:hint="Instagram ID"
+                    android:padding="12dp"
+                    android:textSize="16sp" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
