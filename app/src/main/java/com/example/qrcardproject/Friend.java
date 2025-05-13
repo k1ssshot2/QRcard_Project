@@ -1,3 +1,5 @@
+package com.example.qrcardproject;
+
 public class Friend {
     private String name;
     private String email;
