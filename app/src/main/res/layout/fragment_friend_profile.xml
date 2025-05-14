@@ -1,137 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/screenBackColor">
 
-    <ScrollView
+    <FrameLayout
+        android:id="@+id/mainFrameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:padding="24dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="35dp">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:padding="24dp"
+            android:layout_marginBottom="50dp">
 
-
-            <!-- 프로필 이미지 -->
-
-            <!-- 이름 -->
-
-            <ImageView
-                android:id="@+id/imgProfile"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="24dp"
-                android:onClick="onProfileImageClick"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_default_pic"
-                android:contentDescription="@string/profile_image_desc"/>
-
-            <EditText
-                android:id="@+id/etName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:minHeight="48dp"
-                android:background="@drawable/edittextshape"
-                android:enabled="true"
-                android:hint="User Name"
-                android:padding="12dp"
-                android:textSize="16sp" />
-
-            <!-- 이메일 -->
-            <EditText
-                android:id="@+id/etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:minHeight="48dp"
-                android:background="@drawable/edittextshape"
-                android:enabled="true"
-                android:hint="user@email.com"
-                android:padding="12dp"
-                android:textSize="16sp" />
-
-            <!-- 전화번호 -->
-            <EditText
-                android:id="@+id/etPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:minHeight="48dp"
-                android:background="@drawable/edittextshape"
-                android:enabled="true"
-                android:hint="010-0000-0000"
-                android:padding="12dp"
-                android:textSize="16sp" />
-
-            <!-- 부서 -->
-            <EditText
-                android:id="@+id/etDepartment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:minHeight="48dp"
-                android:background="@drawable/edittextshape"
-                android:enabled="true"
-                android:hint="Department"
-                android:padding="12dp"
-                android:textSize="16sp" />
-
-            <!-- 직책 -->
-            <EditText
-                android:id="@+id/etPosition"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:minHeight="48dp"
-                android:background="@drawable/edittextshape"
-                android:enabled="true"
-                android:hint="Position"
-                android:padding="12dp"
-                android:textSize="16sp" />
-
-            <!-- 소셜 버튼 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <!-- 프로필 이미지 -->
+                <ImageView
+                    android:id="@+id/imgProfile"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginBottom="24dp"
+                    android:contentDescription="@string/profile_image_desc"
+                    android:onClick="onProfileImageClick"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_default_pic" />
+
+                <!-- 이름 -->
                 <EditText
-                    android:id="@+id/etKakao"
-                    android:layout_width="0dp"
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:minHeight="48dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@drawable/edittextshape"
-                    android:hint="KakaoTalk ID"
+                    android:hint="User Name"
+                    android:minHeight="48dp"
                     android:padding="12dp"
                     android:textSize="16sp" />
 
+                <!-- 이메일 -->
                 <EditText
-                    android:id="@+id/etInstagram"
-                    android:layout_width="0dp"
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:minHeight="48dp"
+                    android:layout_marginBottom="12dp"
                     android:background="@drawable/edittextshape"
-                    android:hint="Instagram ID"
+                    android:hint="user@email.com"
+                    android:minHeight="48dp"
                     android:padding="12dp"
                     android:textSize="16sp" />
 
+                <!-- 전화번호 -->
+                <EditText
+                    android:id="@+id/etPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/edittextshape"
+                    android:hint="010-0000-0000"
+                    android:minHeight="48dp"
+                    android:padding="12dp"
+                    android:textSize="16sp" />
+
+                <!-- 부서 -->
+                <EditText
+                    android:id="@+id/etDepartment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/edittextshape"
+                    android:hint="Department"
+                    android:minHeight="48dp"
+                    android:padding="12dp"
+                    android:textSize="16sp" />
+
+                <!-- 직책 -->
+                <EditText
+                    android:id="@+id/etPosition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:background="@drawable/edittextshape"
+                    android:hint="Position"
+                    android:minHeight="48dp"
+                    android:padding="12dp"
+                    android:textSize="16sp" />
+
+                <!-- 소셜 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <EditText
+                        android:id="@+id/etKakao"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittextshape"
+                        android:hint="KakaoTalk ID"
+                        android:minHeight="48dp"
+                        android:padding="12dp"
+                        android:textSize="16sp" />
+
+                    <EditText
+                        android:id="@+id/etInstagram"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edittextshape"
+                        android:hint="Instagram ID"
+                        android:minHeight="48dp"
+                        android:padding="12dp"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="@color/navColor"
+        app:itemIconTint="@drawable/menu_click_color"
+        app:itemTextColor="@drawable/menu_click_color"
+        app:labelVisibilityMode="unlabeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/navi_menu" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
