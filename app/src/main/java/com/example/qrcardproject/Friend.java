@@ -9,6 +9,10 @@ public class Friend {
     private String kakaoId;
     private String instagramId;
 
+    public int getName() {
+        return 1;
+    }
+
     // 생성자, getter, setter
 }
 
