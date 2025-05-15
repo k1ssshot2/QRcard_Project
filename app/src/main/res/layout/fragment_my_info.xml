@@ -2,109 +2,106 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/screenBackColor">
+    android:background="@color/screenBackColor"
+    android:padding="16dp">
 
     <LinearLayout
+        android:id="@+id/layoutMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50sp"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageProfile"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_default_pic"
-            android:scaleType="centerCrop"
-            android:background="@drawable/edittextshape"
-            android:padding="4dp" />
+            android:id="@+id/imageDefault"
+            android:layout_width="150sp"
+            android:layout_height="150sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16sp"
+            android:contentDescription="Default user image"
+            android:src="@drawable/ic_default_pic" />
 
         <EditText
-            android:id="@+id/editUsername"
+            android:id="@+id/editName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Username"
+            android:layout_margin="15sp"
+            android:layout_marginTop="32sp"
             android:background="@drawable/edittextshape"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="12dp"
-            android:enabled="false" />
+            android:hint="@string/username"
+            android:padding="7sp" />
 
         <EditText
-            android:id="@+id/editId"
+            android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="ID"
+            android:layout_margin="15sp"
             android:background="@drawable/edittextshape"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="12dp"
-            android:enabled="false" />
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:padding="7sp" />
 
         <EditText
             android:id="@+id/editPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Password"
-            android:inputType="textPassword"
+            android:layout_margin="15sp"
             android:background="@drawable/edittextshape"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="12dp"
-            android:enabled="false" />
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:padding="7sp" />
 
         <EditText
-            android:id="@+id/editPhoneNumber"
+            android:id="@+id/editPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Phone Number"
+            android:layout_margin="15sp"
             android:background="@drawable/edittextshape"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="12dp"
-            android:enabled="false" />
+            android:hint="@string/phone"
+            android:inputType="phone"
+            android:padding="7sp" />
 
         <EditText
             android:id="@+id/editDepartment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Department"
+            android:layout_margin="15sp"
             android:background="@drawable/edittextshape"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="12dp"
-            android:enabled="false" />
+            android:hint="@string/department"
+            android:padding="7sp" />
 
         <EditText
             android:id="@+id/editPosition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Position"
+            android:layout_margin="15sp"
             android:background="@drawable/edittextshape"
-            android:paddingStart="16dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="12dp"
-            android:enabled="false" />
+            android:hint="@string/position"
+            android:padding="7sp" />
 
-        <Button
-            android:id="@+id/buttonEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="수정"
-            android:background="@drawable/buttonshape" />
+
+
+
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/buttonshape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:text="@string/save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
