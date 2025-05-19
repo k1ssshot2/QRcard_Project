@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.activity_main_screen, container, false);
 
         txtResult = new TextView(getContext());  // 필요 시 결과 출력용
         gestureDetector = new GestureDetectorCompat(getContext(), new SwipeGestureListener());

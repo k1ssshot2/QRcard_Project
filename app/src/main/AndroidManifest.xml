@@ -6,13 +6,14 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:hardwareAccelerated="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -20,10 +21,19 @@
         android:theme="@style/Theme.QRcardProject"
         tools:targetApi="31">
         <activity
+            android:name=".StartScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainScreenActivity"
+            android:exported="false" />
+        <activity
             android:name=".PortraitCaptureActivity"
             android:screenOrientation="portrait"
             android:theme="@style/zxing_CaptureTheme"
-            tools:node="replace"/>
+            tools:node="replace" />
         <activity
             android:name=".NaviActivity"
             android:exported="true">
