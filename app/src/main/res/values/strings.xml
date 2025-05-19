@@ -12,4 +12,8 @@
     <string name="cancel">Cancel</string>
     <string name="back">Back</string>
     <string name="password">Password</string>
+    <string name="edit">Edit</string>
+    <string name="confirmpassword">ConfirmPassword</string>
+    <string name="login">Login</string>
+    <string name="signup">Signup</string>
 </resources>

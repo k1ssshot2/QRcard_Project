@@ -83,7 +83,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="60dp"
-        android:text="QR 코드를 스캔하려면 위로 스와이프 하세요"
+        android:text="QR 코드홈화면를 스캔하려면 위로 스와이프 하세요"
         android:textColor="#000000"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"

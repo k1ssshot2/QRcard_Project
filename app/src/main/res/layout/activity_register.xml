@@ -11,7 +11,6 @@
         android:id="@+id/layoutMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50sp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -22,28 +21,28 @@
             android:id="@+id/textCreateAccountTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15sp"
-            android:layout_marginEnd="15sp"
-            android:layout_marginTop="16sp"
-            android:layout_marginBottom="8sp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="8dp"
             android:gravity="start"
             android:text="Create your\nAccount"
+            android:textColor="?android:attr/textColorPrimary"
             android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:layout_marginTop="32sp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/edittextshape"
+            android:drawableStart="@drawable/ic_email"
+            android:drawablePadding="8dp"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:padding="13dp"
-            android:drawableStart="@drawable/ic_email"
-            android:drawablePadding="8dp" />
+            android:padding="13dp" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -55,11 +54,11 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/edittextshape"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawablePadding="8dp"
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                android:padding="13dp"
-                android:drawableStart="@drawable/ic_lock"
-                android:drawablePadding="8dp" />
+                android:padding="13dp" />
 
             <ImageButton
                 android:id="@+id/buttonShowPassword"
@@ -69,7 +68,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="20dp"
                 android:background="@color/white"
-                android:src="@drawable/ic_visibility_off" /> </RelativeLayout>
+                android:src="@drawable/ic_visibility_off" />
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -81,11 +81,11 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/edittextshape"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawablePadding="8dp"
                 android:hint="@string/confirmpassword"
                 android:inputType="textPassword"
-                android:padding="13dp"
-                android:drawableStart="@drawable/ic_lock"
-                android:drawablePadding="8dp" />
+                android:padding="13dp" />
 
             <ImageButton
                 android:id="@+id/buttonShowConfirmPassword"
@@ -95,7 +95,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="20dp"
                 android:background="@color/white"
-                android:src="@drawable/ic_visibility_off" /> </RelativeLayout>
+                android:src="@drawable/ic_visibility_off" />
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/editName"
@@ -103,10 +104,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@drawable/edittextshape"
-            android:hint="@string/username"
-            android:padding="13dp"
             android:drawableStart="@drawable/ic_person"
-            android:drawablePadding="8dp" />
+            android:drawablePadding="8dp"
+            android:hint="@string/username"
+            android:padding="13dp" />
 
         <EditText
             android:id="@+id/editPhone"
@@ -114,11 +115,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@drawable/edittextshape"
+            android:drawableStart="@drawable/ic_phone"
+            android:drawablePadding="8dp"
             android:hint="@string/phone"
             android:inputType="phone"
-            android:padding="13dp"
-            android:drawableStart="@drawable/ic_phone"
-            android:drawablePadding="8dp" />
+            android:padding="13dp" />
 
         <EditText
             android:id="@+id/editDepartment"
@@ -126,10 +127,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@drawable/edittextshape"
-            android:hint="@string/department"
-            android:padding="13dp"
             android:drawableStart="@drawable/ic_building"
-            android:drawablePadding="8dp" />
+            android:drawablePadding="8dp"
+            android:hint="@string/department"
+            android:padding="13dp" />
 
         <EditText
             android:id="@+id/editPosition"
@@ -137,19 +138,19 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:background="@drawable/edittextshape"
-            android:hint="@string/position"
-            android:padding="13dp"
             android:drawableStart="@drawable/ic_briefcase"
-            android:drawablePadding="8dp" />
+            android:drawablePadding="8dp"
+            android:hint="@string/position"
+            android:padding="13dp" />
 
         <Button
             android:id="@+id/buttonRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:background="@drawable/buttonshape"
+            android:background="@drawable/loginbuttonshape"
             android:backgroundTint="@color/black"
-            android:padding="7sp"
+            android:padding="7dp"
             android:text="Register"
             android:textColor="@color/white" />
 

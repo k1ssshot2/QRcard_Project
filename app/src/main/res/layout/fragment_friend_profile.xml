@@ -9,7 +9,7 @@
         android:id="@+id/layoutMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50sp"
+        android:layout_marginTop="80dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -18,10 +18,10 @@
 
         <ImageView
             android:id="@+id/imageDefault"
-            android:layout_width="150sp"
-            android:layout_height="150sp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16sp"
+            android:layout_marginTop="16dp"
             android:contentDescription="Default user image"
             android:src="@drawable/ic_default_pic" />
 
@@ -29,49 +29,49 @@
             android:id="@+id/editName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
-            android:layout_marginTop="32sp"
+            android:layout_margin="15dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/username"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
         <EditText
             android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
+            android:layout_margin="15dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
         <EditText
             android:id="@+id/editPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
+            android:layout_margin="15dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/password"
             android:inputType="textPassword"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
         <EditText
             android:id="@+id/editDepartment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
+            android:layout_margin="15dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/department"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
         <EditText
             android:id="@+id/editPosition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
+            android:layout_margin="15dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/position"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
 
 

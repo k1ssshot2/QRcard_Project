@@ -27,7 +27,7 @@ public class StartScreenActivity extends AppCompatActivity {
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StartScreenActivity.this, SignupActivity.class);
+                Intent intent = new Intent(StartScreenActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
         });
