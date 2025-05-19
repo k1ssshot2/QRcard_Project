@@ -30,6 +30,9 @@
             android:name=".MainScreenActivity"
             android:exported="false" />
         <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".PortraitCaptureActivity"
             android:screenOrientation="portrait"
             android:theme="@style/zxing_CaptureTheme"

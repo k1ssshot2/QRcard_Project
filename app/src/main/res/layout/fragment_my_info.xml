@@ -1,73 +1,118 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/screenBackColor"
     android:padding="16dp">
 
     <LinearLayout
+        android:id="@+id/layoutMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50sp"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageProfile"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_default_pic"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_background"
-            android:padding="4dp" />
+            android:id="@+id/imageDefault"
+            android:layout_width="150sp"
+            android:layout_height="150sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16sp"
+            android:contentDescription="Default user image"
+            android:src="@drawable/ic_default_pic" />
 
         <EditText
-            android:id="@+id/editUsername"
+            android:id="@+id/editName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
-            android:enabled="false" />
+            android:layout_margin="15sp"
+            android:layout_marginTop="32sp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/username"
+            android:padding="7sp" />
 
         <EditText
-            android:id="@+id/editId"
+            android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="ID"
-            android:enabled="false" />
+            android:layout_margin="15sp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:padding="7sp" />
 
         <EditText
             android:id="@+id/editPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:layout_margin="15sp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/password"
             android:inputType="textPassword"
-            android:enabled="false" />
+            android:padding="7sp" />
 
         <EditText
-            android:id="@+id/editPhoneNumber"
+            android:id="@+id/editPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone Number"
-            android:enabled="false" />
+            android:layout_margin="15sp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/phone"
+            android:inputType="phone"
+            android:padding="7sp" />
 
         <EditText
             android:id="@+id/editDepartment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Department"
-            android:enabled="false" />
+            android:layout_margin="15sp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/department"
+            android:padding="7sp" />
 
         <EditText
             android:id="@+id/editPosition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Position"
-            android:enabled="false" />
-
-        <Button
-            android:id="@+id/buttonEdit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="수정"
-            android:layout_marginTop="16dp" />
+            android:layout_margin="15sp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/position"
+            android:padding="7sp" />
     </LinearLayout>
-</ScrollView>
+
+    <Button
+        android:id="@+id/btnEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/buttonshape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:text="@string/edit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/buttonshape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:text="@string/save"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

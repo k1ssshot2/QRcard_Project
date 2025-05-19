@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "251696133303",
+    "project_id": "qrcardproject-9db66",
+    "storage_bucket": "qrcardproject-9db66.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251696133303:android:4d96870d7bd71282c64932",
+        "android_client_info": {
+          "package_name": "com.example.qrcardproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz2BJJQmk0aQ1qr2LK2ctne86FR3eeHsA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
