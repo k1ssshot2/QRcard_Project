@@ -10,5 +10,6 @@
     <string name="department">Department</string>
     <string name="position">Position</string>
     <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
     <string name="password">Password</string>
 </resources>
