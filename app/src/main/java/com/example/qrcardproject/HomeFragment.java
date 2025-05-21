@@ -53,13 +53,27 @@ public class HomeFragment extends Fragment {
             return true; // 중요: 이벤트를 소비
         });
 
-        // 런처 등록 (라이프사이클 안에서)
+        // 스캔 시
         barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() == null) {
                 Toast.makeText(getContext(), "스캔이 취소되었습니다.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "스캔 결과: " + result.getContents(), Toast.LENGTH_SHORT).show();
-                txtResult.setText(result.getContents());
+                String scannedData = result.getContents();
+                Toast.makeText(getContext(), "스캔 결과: " + scannedData, Toast.LENGTH_SHORT).show();
+
+                // fragment_add_scan으로 이동
+                AddScanFragment fragmentAddScan = new AddScanFragment();
+
+                // 데이터 전달
+                Bundle bundle = new Bundle();
+                bundle.putString("scanned_info", scannedData);
+                fragmentAddScan.setArguments(bundle);
+
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.mainFrameLayout, fragmentAddScan)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
