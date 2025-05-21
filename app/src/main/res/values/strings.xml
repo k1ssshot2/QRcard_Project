@@ -15,5 +15,6 @@
     <string name="edit">Edit</string>
     <string name="confirmpassword">ConfirmPassword</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
     <string name="signup">Signup</string>
 </resources>
