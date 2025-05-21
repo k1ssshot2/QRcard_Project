@@ -14,7 +14,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigationView"
         android:layout_width="match_parent"
-        android:layout_height="50sp"
+        android:layout_height="50dp"
         android:layout_weight="1"
         app:itemBackground="@color/navColor"
         app:itemIconTint="@drawable/menu_click_color"
