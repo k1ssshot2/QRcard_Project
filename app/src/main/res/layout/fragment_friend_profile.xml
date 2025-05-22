@@ -105,29 +105,7 @@
                     android:orientation="horizontal"
                     android:weightSum="2">
 
-                    <EditText
-                        android:id="@+id/etKakao"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/edittextshape"
-                        android:hint="KakaoTalk ID"
-                        android:minHeight="48dp"
-                        android:padding="12dp"
-                        android:textSize="16sp" />
 
-                    <EditText
-                        android:id="@+id/etInstagram"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/edittextshape"
-                        android:hint="Instagram ID"
-                        android:minHeight="48dp"
-                        android:padding="12dp"
-                        android:textSize="16sp" />
 
                 </LinearLayout>
             </LinearLayout>
