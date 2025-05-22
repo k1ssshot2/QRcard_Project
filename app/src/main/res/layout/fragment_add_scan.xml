@@ -20,8 +20,8 @@
 
         <ImageView
             android:id="@+id/imageDefault"
-            android:layout_width="150sp"
-            android:layout_height="150sp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16sp"
             android:contentDescription="Default user image"
@@ -32,49 +32,49 @@
             android:id="@+id/editName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
-            android:layout_marginTop="32sp"
+            android:layout_margin="15dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/username"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
         <EditText
             android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
+            android:layout_margin="15dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/email"
             android:inputType="textEmailAddress"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
         <EditText
             android:id="@+id/editPhone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
+            android:layout_margin="15dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/phone"
             android:inputType="phone"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
         <EditText
             android:id="@+id/editDepartment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
+            android:layout_margin="15dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/department"
-            android:padding="7sp" />
+            android:padding="7dp" />
 
         <EditText
             android:id="@+id/editPosition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15sp"
+            android:layout_margin="15dp"
             android:background="@drawable/edittextshape"
             android:hint="@string/position"
-            android:padding="7sp" />
+            android:padding="7dp" />
     </LinearLayout>
 
     <!-- Save Button -->
@@ -100,7 +100,7 @@
         android:id="@+id/btnCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10sp"
+        android:layout_margin="10dp"
         android:background="@drawable/buttonshape"
         android:minWidth="0dp"
         android:minHeight="0dp"

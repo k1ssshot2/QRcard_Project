@@ -1,127 +1,97 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/screenBackColor">
+    android:background="@color/screenBackColor"
+    android:padding="16dp">
 
-    <FrameLayout
-        android:id="@+id/mainFrameLayout"
+    <LinearLayout
+        android:id="@+id/layoutMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ScrollView
+        <ImageView
+            android:id="@+id/imageDefault"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:contentDescription="Default user image"
+            android:src="@drawable/ic_default_pic" />
+
+        <EditText
+            android:id="@+id/editName"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:padding="24dp"
-            android:layout_marginBottom="50dp">
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/username"
+            android:padding="7dp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
-                android:gravity="center_horizontal"
-                android:orientation="vertical">
+        <EditText
+            android:id="@+id/editEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:padding="7dp" />
 
-                <!-- 프로필 이미지 -->
-                <ImageView
-                    android:id="@+id/imgProfile"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_marginBottom="24dp"
-                    android:contentDescription="@string/profile_image_desc"
-                    android:onClick="onProfileImageClick"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_default_pic" />
+        <EditText
+            android:id="@+id/editPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:padding="7dp" />
 
-                <!-- 이름 -->
-                <EditText
-                    android:id="@+id/etName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/edittextshape"
-                    android:hint="User Name"
-                    android:minHeight="48dp"
-                    android:padding="12dp"
-                    android:textSize="16sp" />
+        <EditText
+            android:id="@+id/editDepartment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/department"
+            android:padding="7dp" />
 
-                <!-- 이메일 -->
-                <EditText
-                    android:id="@+id/etEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/edittextshape"
-                    android:hint="user@email.com"
-                    android:minHeight="48dp"
-                    android:padding="12dp"
-                    android:textSize="16sp" />
-
-                <!-- 전화번호 -->
-                <EditText
-                    android:id="@+id/etPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/edittextshape"
-                    android:hint="010-0000-0000"
-                    android:minHeight="48dp"
-                    android:padding="12dp"
-                    android:textSize="16sp" />
-
-                <!-- 부서 -->
-                <EditText
-                    android:id="@+id/etDepartment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:background="@drawable/edittextshape"
-                    android:hint="Department"
-                    android:minHeight="48dp"
-                    android:padding="12dp"
-                    android:textSize="16sp" />
-
-                <!-- 직책 -->
-                <EditText
-                    android:id="@+id/etPosition"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:background="@drawable/edittextshape"
-                    android:hint="Position"
-                    android:minHeight="48dp"
-                    android:padding="12dp"
-                    android:textSize="16sp" />
-
-                <!-- 소셜 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
+        <EditText
+            android:id="@+id/editPosition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="@drawable/edittextshape"
+            android:hint="@string/position"
+            android:padding="7dp" />
 
 
 
-                </LinearLayout>
-            </LinearLayout>
-        </ScrollView>
-    </FrameLayout>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:background="@color/navColor"
-        app:itemIconTint="@drawable/menu_click_color"
-        app:itemTextColor="@drawable/menu_click_color"
-        app:labelVisibilityMode="unlabeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/navi_menu" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/buttonshape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:text="@string/save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

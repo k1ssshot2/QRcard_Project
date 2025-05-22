@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@color/screenBackColor">
 
     <!-- 프래그먼트를 표시할 공간 -->
     <FrameLayout
@@ -11,23 +11,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/navigationView"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- 하단 네비게이션 -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/navColor"
-        app:itemIconTint="@drawable/menu_click_color"
-        app:itemTextColor="@drawable/menu_click_color"
-        app:menu="@menu/navi_menu"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:labelVisibilityMode="unlabeled" />
 
     <!-- 검색창 -->
     <EditText
@@ -87,7 +73,7 @@
         android:paddingBottom="64dp"
         android:scrollbars="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/navigationView"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/favoriteRecyclerView" />
