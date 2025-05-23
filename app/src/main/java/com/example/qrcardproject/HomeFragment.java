@@ -60,7 +60,7 @@ public class HomeFragment extends Fragment {
                 generateQRCode(qrData);  // QR 생성
                 qrImage.setVisibility(View.VISIBLE);
             } else {
-                Toast.makeText(getContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "사용자 확인이 필요합니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
