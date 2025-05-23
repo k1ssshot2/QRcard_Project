@@ -18,6 +18,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -34,6 +36,8 @@ public class HomeFragment extends Fragment {
     private GestureDetectorCompat gestureDetector;
     private ActivityResultLauncher<ScanOptions> barcodeLauncher;
 
+    private FirebaseFirestore db; // firestore 객체
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -45,6 +49,25 @@ public class HomeFragment extends Fragment {
 
         qrImage = view.findViewById(R.id.qr_image);
         txtResult = view.findViewById(R.id.myEmail);
+
+        db = FirebaseFirestore.getInstance(); //Firestore 인스턴스 초기화
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            String uid = user.getUid();
+            DocumentReference documentReference = db.collection("user").document(uid);
+
+            documentReference.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    String qrData = user.getUid(); // firebase에서 사용자 uid 받아서 데이터쿠성
+
+                    generateQRCode(qrData);
+                    qrImage.setVisibility(View.VISIBLE);
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(getContext(), "사용자 정보 로딩 실패", Toast.LENGTH_SHORT).show();
+            });
+        }
 
 
         // QR 코드 생성
