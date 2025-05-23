@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.FrameLayout;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,6 +24,8 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class HomeFragment extends Fragment {
 
@@ -42,6 +45,24 @@ public class HomeFragment extends Fragment {
 
         qrImage = view.findViewById(R.id.qr_image);
         txtResult = view.findViewById(R.id.myEmail);
+
+        FrameLayout qrFrame = view.findViewById(R.id.qr_frame);  // 클릭 대상
+        qrImage.setVisibility(View.GONE);  // QR 안 보이게
+
+        qrFrame.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            if (user != null) {
+                String email = user.getEmail();
+                String uid = user.getUid();
+                String qrData = "uid:" + uid + "/email:" + email;
+
+                generateQRCode(qrData);  // QR 생성
+                qrImage.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(getContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // QR 코드 생성
         generateQRCode("https://example.com");
