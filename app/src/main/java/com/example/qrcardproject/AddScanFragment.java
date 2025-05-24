@@ -25,9 +25,7 @@ public class AddScanFragment extends Fragment {
     private FirebaseFirestore db;
 
     private EditText editName, editEmail, editPhone, editDepartment, editPosition;
-    private Button btnSave, btnCancel;
-    private String scannedUserId;
-    private Map<String, Object> scannedUserData;
+
     private String getSafeString(Object value) {
         return value != null ? value.toString() : "";
     }
@@ -49,13 +47,13 @@ public class AddScanFragment extends Fragment {
         editPhone = view.findViewById(R.id.editPhone);
         editDepartment = view.findViewById(R.id.editDepartment);
         editPosition = view.findViewById(R.id.editPosition);
-        btnSave = view.findViewById(R.id.btnSave);
-        btnCancel = view.findViewById(R.id.btnCancel);
+        Button btnSave = view.findViewById(R.id.btnSave);
+        Button btnCancel = view.findViewById(R.id.btnCancel);
 
         // ✅ Bundle로부터 scannedUserId 추출
         Bundle args = getArguments();
         if (args != null) {
-            scannedUserId = args.getString("scanned_info");
+            String scannedUserId = args.getString("scanned_info");
             if (scannedUserId != null) {
                 loadUserData(scannedUserId); // Firestore에서 정보 불러오기
             } else {
@@ -106,7 +104,7 @@ public class AddScanFragment extends Fragment {
         db.collection("contacts").add(contact)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(getContext(), "연락처가 저장되었습니다.", Toast.LENGTH_SHORT).show();
-                    requireActivity().onBackPressed(); // 저장 후 이전 화면으로
+                    requireActivity(); // 저장 후 이전 화면으로
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "연락처 저장 실패", e);
