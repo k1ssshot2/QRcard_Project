@@ -9,10 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -62,7 +60,7 @@ public class AddScanFragment extends Fragment {
         }
 
         btnSave.setOnClickListener(v -> saveContact());
-        btnCancel.setOnClickListener(v -> requireActivity().onBackPressed());
+        btnCancel.setOnClickListener(v -> requireActivity());
 
         return view;
     }
