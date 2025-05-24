@@ -28,6 +28,9 @@ public class AddScanFragment extends Fragment {
     private Button btnSave, btnCancel;
     private String scannedUserId;
     private Map<String, Object> scannedUserData;
+    private String getSafeString(Object value) {
+        return value != null ? value.toString() : "";
+    }
 
     public AddScanFragment() {
         // Required empty public constructor
@@ -66,23 +69,29 @@ public class AddScanFragment extends Fragment {
         return view;
     }
     private void loadUserData(String userId) {
-        db.collection("users").document(userId).get()
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document(userId)
+                .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        scannedUserData = documentSnapshot.getData();
+                        Map<String, Object> scannedUserData = documentSnapshot.getData();
 
-                        editName.setText((String) scannedUserData.get("name"));
-                        editEmail.setText((String) scannedUserData.get("email"));
-                        editPhone.setText((String) scannedUserData.get("phone"));
-                        editDepartment.setText((String) scannedUserData.get("department"));
-                        editPosition.setText((String) scannedUserData.get("position"));
+                        if (scannedUserData != null) {
+                            editName.setText(getSafeString(scannedUserData.get("name")));
+                            editEmail.setText(getSafeString(scannedUserData.get("email")));
+                            editPhone.setText(getSafeString(scannedUserData.get("phone")));
+                            editDepartment.setText(getSafeString(scannedUserData.get("department")));
+                            editPosition.setText(getSafeString(scannedUserData.get("position")));
+                        } else {
+                            Toast.makeText(getContext(), "사용자 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(getContext(), "상대 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "존재하지 않는 사용자입니다.", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "유저 정보 로드 실패", e);
-                    Toast.makeText(getContext(), "정보 불러오기 실패", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "데이터 로드 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
