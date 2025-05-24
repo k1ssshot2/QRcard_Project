@@ -23,10 +23,12 @@
 
         <activity
             android:name=".LoginScreenActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".RegisterActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".PortraitCaptureActivity"
             android:screenOrientation="portrait"
