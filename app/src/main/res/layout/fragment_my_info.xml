@@ -71,7 +71,7 @@
                 android:id="@+id/editName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="11dp"
                 android:layout_marginTop="32dp"
                 android:background="@drawable/edittextshape"
                 android:hint="@string/username"
@@ -85,27 +85,17 @@
                 android:id="@+id/editEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="11dp"
                 android:background="@drawable/edittextshape"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
                 android:padding="7dp" />
 
             <EditText
-                android:id="@+id/editPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:background="@drawable/edittextshape"
-                android:hint="@string/password"
-                android:inputType="textPassword"
-                android:padding="7dp" />
-
-            <EditText
                 android:id="@+id/editPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="11dp"
                 android:background="@drawable/edittextshape"
                 android:hint="@string/phone"
                 android:inputType="phone"
@@ -115,7 +105,7 @@
                 android:id="@+id/editDepartment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="11dp"
                 android:background="@drawable/edittextshape"
                 android:hint="@string/department"
                 android:padding="7dp" />
@@ -124,10 +114,61 @@
                 android:id="@+id/editPosition"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="11dp"
                 android:background="@drawable/edittextshape"
                 android:hint="@string/position"
                 android:padding="7dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/newPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="11dp"
+                    android:background="@drawable/edittextshape"
+                    android:hint="Enter new Password"
+                    android:inputType="textPassword"
+                    android:padding="7dp" />
+
+                <ImageButton
+                    android:id="@+id/buttonShowNewPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/white"
+                    android:src="@drawable/ic_visibility_off" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/confirmNewPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="11dp"
+                    android:background="@drawable/edittextshape"
+                    android:hint="Confirm new Password"
+                    android:inputType="textPassword"
+                    android:padding="7dp" />
+
+                <ImageButton
+                    android:id="@+id/buttonShowConfirmNewPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/white"
+                    android:src="@drawable/ic_visibility_off" />
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
