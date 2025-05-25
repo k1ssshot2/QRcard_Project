@@ -1,7 +1,7 @@
 package com.example.qrcardproject;
 import java.io.Serializable;
 
-public class Friend implements Serializable{
+public class Friend implements Serializable, FriendListItem{
     private String id;           // Firestore 문서 ID
     private String name;
     private String email;

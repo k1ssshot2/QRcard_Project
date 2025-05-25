@@ -15,6 +15,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ContactsFragment extends Fragment {
@@ -34,18 +36,16 @@ public class ContactsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        // 즐겨찾기 RecyclerView
         favoriteRecyclerView = view.findViewById(R.id.favoriteRecyclerView);
         favoriteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         favoriteList = new ArrayList<>();
-        favoriteAdapter = new FriendsAdapter(favoriteList, this::onFriendClick);
+        favoriteAdapter = new FriendsAdapter(new ArrayList<>(), this::onFriendClick);
         favoriteRecyclerView.setAdapter(favoriteAdapter);
 
-        // 일반 친구 RecyclerView
         contactRecyclerView = view.findViewById(R.id.contactRecyclerView);
         contactRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         contactList = new ArrayList<>();
-        contactAdapter = new FriendsAdapter(contactList, this::onFriendClick);
+        contactAdapter = new FriendsAdapter(new ArrayList<>(), this::onFriendClick);
         contactRecyclerView.setAdapter(contactAdapter);
 
         db = FirebaseFirestore.getInstance();
@@ -78,11 +78,32 @@ public class ContactsFragment extends Fragment {
                             }
                         }
 
-                        favoriteAdapter.notifyDataSetChanged();
-                        contactAdapter.notifyDataSetChanged();
+                        List<FriendListItem> groupedFavoriteList = groupFriendsWithHeaders(favoriteList);
+                        List<FriendListItem> groupedContactList = groupFriendsWithHeaders(contactList);
+
+                        favoriteAdapter.setData(groupedFavoriteList);
+                        contactAdapter.setData(groupedContactList);
                     } else {
                         Log.w("ContactsFragment", "Error getting documents.", task.getException());
                     }
                 });
     }
+
+    private List<FriendListItem> groupFriendsWithHeaders(List<Friend> friends) {
+        List<FriendListItem> groupedList = new ArrayList<>();
+        Collections.sort(friends, Comparator.comparing(Friend::getName, String.CASE_INSENSITIVE_ORDER));
+
+        String lastHeader = "";
+        for (Friend friend : friends) {
+            String header = friend.getName().substring(0, 1).toUpperCase();
+            if (!header.equals(lastHeader)) {
+                groupedList.add(new SectionHeader(header));
+                lastHeader = header;
+            }
+            groupedList.add(friend);
+        }
+
+        return groupedList;
+    }
 }
+
