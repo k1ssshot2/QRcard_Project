@@ -14,8 +14,8 @@ import java.util.List;
 
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendViewHolder> {
 
-    private List<Friend> friendsList;
-    private OnFriendClickListener listener;
+    private final List<Friend> friendsList;
+    private final OnFriendClickListener listener;
 
     public interface OnFriendClickListener {
         void onFriendClick(Friend friend);
