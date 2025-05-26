@@ -102,7 +102,7 @@ public class AddScanFragment extends Fragment {
         db.collection("contacts").add(contact)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(getContext(), "연락처가 저장되었습니다.", Toast.LENGTH_SHORT).show();
-                    requireActivity(); // 저장 후 이전 화면으로
+                    requireActivity().onBackPressed();; // 저장 후 이전 화면으로
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "연락처 저장 실패", e);

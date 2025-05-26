@@ -57,12 +57,12 @@
                 android:padding="7dp" />
 
             <EditText
-                android:id="@+id/editPassword"
+                android:id="@+id/editPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:background="@drawable/edittextshape"
-                android:hint="@string/password"
+                android:hint="@string/phone"
                 android:inputType="textPassword"
                 android:padding="7dp" />
 
