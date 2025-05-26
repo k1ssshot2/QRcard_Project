@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -49,25 +50,25 @@ public class HomeFragment extends Fragment {
 
         qrImage = view.findViewById(R.id.qr_image);
         txtResult = view.findViewById(R.id.myEmail);
+        FrameLayout qrFrame = view.findViewById(R.id.qr_frame);
 
-        db = FirebaseFirestore.getInstance(); //Firestore 인스턴스 초기화
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        qrImage.setVisibility(View.GONE);
+        qrFrame.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null) {
-            String uid = user.getUid();
-            DocumentReference documentReference = db.collection("user").document(uid);
+            if (user != null) {
+                String email = user.getEmail();
+                String uid = user.getUid();
+                String qrData = "uid" + uid + "/email" + email;
 
-            documentReference.get().addOnSuccessListener(documentSnapshot -> {
-                if (documentSnapshot.exists()) {
-                    String qrData = user.getUid(); // firebase에서 사용자 uid 받아서 데이터 구성
+                generateQRCode(qrData);
+                qrImage.setVisibility(View.VISIBLE);
+            } else {
+                Toast.makeText(getContext(), "사용자 확인이 필요합니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-                    generateQRCode(qrData);
-                    qrImage.setVisibility(View.VISIBLE);
-                }
-            }).addOnFailureListener(e -> {
-                Toast.makeText(getContext(), "사용자 정보 로딩 실패", Toast.LENGTH_SHORT).show();
-            });
-        }
+        return view;
 
 
         // QR 코드 생성
