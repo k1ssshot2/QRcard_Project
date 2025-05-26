@@ -40,7 +40,7 @@ public class LoginScreenActivity extends AppCompatActivity {
                                     .get()
                                     .addOnSuccessListener(documentSnapshots -> {
                                         if (documentSnapshots.isEmpty()) { // 유저 정보 있음 -> 홈화면 이동
-                                            Intent intent = new Intent(LoginScreenActivity.this, HomeFragment.class);
+                                            Intent intent = new Intent(LoginScreenActivity.this, NaviActivity.class);
                                             startActivity(intent);
                                             finish();
                                         } else { // 유저 정보 없음 → 회원가입이 안 되어 있음
