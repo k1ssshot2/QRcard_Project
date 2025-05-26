@@ -40,6 +40,7 @@ public class HomeFragment extends Fragment {
     private GestureDetectorCompat gestureDetector;
     private ActivityResultLauncher<ScanOptions> barcodeLauncher;
 
+    private FirebaseUser user;
     private FirebaseFirestore db; // firestore 객체
 
     public HomeFragment() {
@@ -51,26 +52,57 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+        TextView nameTextView = view.findViewById(R.id.myName);
+        TextView emailTextView = view.findViewById(R.id.myEmail);
+        TextView phoneTextView = view.findViewById(R.id.myNumber);
+
         qrImage = view.findViewById(R.id.qr_image);
         txtResult = view.findViewById(R.id.myEmail);
 
 
-        FrameLayout qrFrame = view.findViewById(R.id.qr_frame);  // 클릭 대상
+
         qrImage.setVisibility(View.GONE);  // QR 안 보이게
+        FrameLayout qrFrame = view.findViewById(R.id.qr_frame);  // 클릭 대상
 
         qrFrame.setOnClickListener(v -> {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
             if (user != null) {
-                String email = user.getEmail();
                 String uid = user.getUid();
-                String qrData = "uid:" + uid + "/email:" + email;
+                long now = System.currentTimeMillis();
 
-                generateQRCode(qrData);  // QR 생성
-                qrImage.setVisibility(View.VISIBLE);
-            } else {
-                Toast.makeText(getContext(), "사용자 확인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                db = FirebaseFirestore.getInstance();
+
+                db.collection("users").document(uid).get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                String name = documentSnapshot.getString("name");
+                                String email = documentSnapshot.getString("email");
+                                String phone = documentSnapshot.getString("phone");
+
+                                // TextView에 표시
+                                nameTextView.setText(name != null ? name : "이름 없음");
+                                emailTextView.setText(email != null ? email : "이메일 없음");
+                                phoneTextView.setText(phone != null ? phone : "전화번호 없음");
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "사용자 정보 불러오기 실패", Toast.LENGTH_SHORT).show();
+                        });
+
+                long currentTime = System.currentTimeMillis();
+                long expiryTime = currentTime + (5 * 60 * 1000); //유효시간 5분
+
+
+                if (currentTime > expiryTime) {
+                    Toast.makeText(getContext(), "사용자 확인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                } else { String qrData = "uid:" + uid + "\ntimestamp: " + now;
+                    generateQRCode(qrData);  // QR 생성
+                    qrImage.setVisibility(View.VISIBLE);
+                }
+
             }
+
         });
 
         // QR 코드 생성
