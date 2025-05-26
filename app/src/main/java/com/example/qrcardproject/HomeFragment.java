@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
 
             documentReference.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
-                    String qrData = user.getUid(); // firebase에서 사용자 uid 받아서 데이터쿠성
+                    String qrData = user.getUid(); // firebase에서 사용자 uid 받아서 데이터 구성
 
                     generateQRCode(qrData);
                     qrImage.setVisibility(View.VISIBLE);
@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
 
 
         // QR 코드 생성
-        generateQRCode("https://example.com");
+        // generateQRCode("https://example.com");
 
         // 스와이프 감지
         gestureDetector = new GestureDetectorCompat(requireContext(), new SwipeGestureListener());
