@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -5,78 +6,93 @@
     android:background="@color/screenBackColor"
     android:padding="16dp">
 
-    <LinearLayout
-        android:id="@+id/layoutMain"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+    <!-- ScrollView 시작 -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@+id/btnEdit"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/imageDefault"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:contentDescription="Default user image"
-            android:src="@drawable/ic_default_pic" />
-
-        <EditText
-            android:id="@+id/editName"
+        <LinearLayout
+            android:id="@+id/layoutMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/edittextshape"
-            android:hint="@string/username"
-            android:padding="7dp" />
+            android:layout_marginTop="45dp"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/editEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@drawable/edittextshape"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            android:padding="7dp" />
+            <ImageView
+                android:id="@+id/imageDefault"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:contentDescription="Default user image"
+                android:src="@drawable/ic_default_pic" />
 
-        <EditText
-            android:id="@+id/editPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@drawable/edittextshape"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:padding="7dp" />
+            <EditText
+                android:id="@+id/editName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/edittextshape"
+                android:hint="@string/username"
+                android:padding="7dp"
+                android:maxLines="1"
+                android:imeOptions="actionNext"
+                android:inputType="textPersonName"/>
 
-        <EditText
-            android:id="@+id/editDepartment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@drawable/edittextshape"
-            android:hint="@string/department"
-            android:padding="7dp" />
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/edittextshape"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
+                android:padding="7dp" />
 
-        <EditText
-            android:id="@+id/editPosition"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:background="@drawable/edittextshape"
-            android:hint="@string/position"
-            android:padding="7dp" />
+            <EditText
+                android:id="@+id/editPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/edittextshape"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:padding="7dp" />
 
+            <EditText
+                android:id="@+id/editDepartment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/edittextshape"
+                android:hint="@string/department"
+                android:padding="7dp"
+                android:maxLines="1"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords"/>
 
+            <EditText
+                android:id="@+id/editPosition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:background="@drawable/edittextshape"
+                android:hint="@string/position"
+                android:padding="7dp"
+                android:maxLines="1"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords"/>
 
-
-    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <!-- ScrollView 끝 -->
 
     <Button
         android:id="@+id/btnEdit"

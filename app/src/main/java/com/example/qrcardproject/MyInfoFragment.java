@@ -1,64 +1,198 @@
 package com.example.qrcardproject;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link MyInfoFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import com.example.qrcardproject.R;
+
 public class MyInfoFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "MyInfoFragment";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Button btnSave;
+    private Button btnLogout;
+    private ImageView imageDefault;
+    private EditText editName;
+    private EditText editEmail;
+    private EditText editPhone;
+    private EditText editDepartment;
+    private EditText editPosition;
+    private EditText newPassword;
+    private EditText confirmNewPassword;
+    private ImageButton buttonShowNewPassword;
+    private ImageButton buttonShowConfirmNewPassword;
 
-    public MyInfoFragment() {
-        // Required empty public constructor
-    }
+    private boolean isNewPasswordVisible = false;
+    private boolean isConfirmNewPasswordVisible = false;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MyInfoFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MyInfoFragment newInstance(String param1, String param2) {
-        MyInfoFragment fragment = new MyInfoFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private FirebaseUser currentUser;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        currentUser = mAuth.getCurrentUser();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_my_info, container, false);
+
+        btnSave = view.findViewById(R.id.btnSave);
+        btnLogout = view.findViewById(R.id.btnLogout);
+        imageDefault = view.findViewById(R.id.imageDefault);
+        editName = view.findViewById(R.id.editName);
+        editEmail = view.findViewById(R.id.editEmail);
+        editPhone = view.findViewById(R.id.editPhone);
+        editDepartment = view.findViewById(R.id.editDepartment);
+        editPosition = view.findViewById(R.id.editPosition);
+        newPassword = view.findViewById(R.id.newPassword);
+        confirmNewPassword = view.findViewById(R.id.confirmNewPassword);
+        buttonShowNewPassword = view.findViewById(R.id.buttonShowNewPassword);
+        buttonShowConfirmNewPassword = view.findViewById(R.id.buttonShowConfirmNewPassword);
+
+        newPassword.setText("");
+        confirmNewPassword.setText("");
+
+        loadUserProfile();
+
+        btnSave.setOnClickListener(v -> {
+            saveUserProfile();
+        });
+
+        btnLogout.setOnClickListener(v -> {
+            logoutUser();
+        });
+
+        buttonShowNewPassword.setOnClickListener(v -> {
+            togglePasswordVisibility(newPassword, buttonShowNewPassword, !isNewPasswordVisible);
+            isNewPasswordVisible = !isNewPasswordVisible;
+        });
+
+        buttonShowConfirmNewPassword.setOnClickListener(v -> {
+            togglePasswordVisibility(confirmNewPassword, buttonShowConfirmNewPassword, !isConfirmNewPasswordVisible);
+            isConfirmNewPasswordVisible = !isConfirmNewPasswordVisible;
+        });
+
+        return view;
+    }
+
+    private void loadUserProfile() {
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DocumentReference userRef = db.collection("users").document(userId);
+
+            userRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    editName.setText(documentSnapshot.getString("name"));
+                    editEmail.setText(documentSnapshot.getString("email"));
+                    editPhone.setText(documentSnapshot.getString("phone"));
+                    editDepartment.setText(documentSnapshot.getString("department"));
+                    editPosition.setText(documentSnapshot.getString("position"));
+                } else {
+                    Log.d(TAG, "사용자 문서가 존재하지 않습니다.");
+                    Toast.makeText(getContext(), "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(e -> {
+                Log.e(TAG, "사용자 정보 로드 실패", e);
+                Toast.makeText(getContext(), "사용자 정보를 로드하는 데 실패했습니다: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            });
+        } else {
+            Log.d(TAG, "현재 로그인된 사용자가 없습니다.");
+            Toast.makeText(getContext(), "로그인된 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void saveUserProfile() {
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "로그인된 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String name = editName.getText().toString().trim();
+        String email = editEmail.getText().toString().trim();
+        String phone = editPhone.getText().toString().trim();
+        String department = editDepartment.getText().toString().trim();
+        String position = editPosition.getText().toString().trim();
+        String newPass = newPassword.getText().toString();
+        String confirmPass = confirmNewPassword.getText().toString();
+
+        DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+        userRef.update(
+                "name", name,
+                "email", email,
+                "phone", phone,
+                "department", department,
+                "position", position
+        ).addOnSuccessListener(aVoid -> {
+            Toast.makeText(getContext(), "프로필 정보가 업데이트되었습니다.", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "프로필 정보 업데이트 실패", e);
+            Toast.makeText(getContext(), "프로필 정보 업데이트에 실패했습니다: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        });
+
+        if (!newPass.isEmpty()) {
+            if (newPass.equals(confirmPass)) {
+                if (newPass.length() >= 6) {
+                    currentUser.updatePassword(newPass)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getContext(), "비밀번호가 성공적으로 업데이트되었습니다.", Toast.LENGTH_SHORT).show();
+                                    newPassword.setText("");
+                                    confirmNewPassword.setText("");
+                                } else {
+                                    Log.e(TAG, "비밀번호 업데이트 실패", task.getException());
+                                    Toast.makeText(getContext(), "비밀번호 업데이트 실패: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            });
+                } else {
+                    Toast.makeText(getContext(), "비밀번호는 6자리 이상이어야 합니다.", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getContext(), "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_info, container, false);
+    private void logoutUser() {
+        mAuth.signOut();
+        Toast.makeText(getContext(), "로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), LoginScreenActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    private void togglePasswordVisibility(EditText editText, ImageButton imageButton, boolean showPassword) {
+        if (showPassword) {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            imageButton.setImageResource(R.drawable.ic_visibility);
+        } else {
+            editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            imageButton.setImageResource(R.drawable.ic_visibility_off);
+        }
+        editText.setSelection(editText.getText().length());
     }
 }

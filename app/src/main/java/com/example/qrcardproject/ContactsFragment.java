@@ -1,64 +1,109 @@
 package com.example.qrcardproject;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ContactsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 public class ContactsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private RecyclerView favoriteRecyclerView;
+    private RecyclerView contactRecyclerView;
+    private FriendsAdapter favoriteAdapter;
+    private FriendsAdapter contactAdapter;
+    private List<Friend> favoriteList;
+    private List<Friend> contactList;
+    private FirebaseFirestore db;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ContactsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ContactsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ContactsFragment newInstance(String param1, String param2) {
-        ContactsFragment fragment = new ContactsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    public ContactsFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contacts, container, false);
+        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
+
+        favoriteRecyclerView = view.findViewById(R.id.favoriteRecyclerView);
+        favoriteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        favoriteList = new ArrayList<>();
+        favoriteAdapter = new FriendsAdapter(new ArrayList<>(), this::onFriendClick);
+        favoriteRecyclerView.setAdapter(favoriteAdapter);
+
+        contactRecyclerView = view.findViewById(R.id.contactRecyclerView);
+        contactRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        contactList = new ArrayList<>();
+        contactAdapter = new FriendsAdapter(new ArrayList<>(), this::onFriendClick);
+        contactRecyclerView.setAdapter(contactAdapter);
+
+        db = FirebaseFirestore.getInstance();
+        loadFriendsFromFirestore();
+
+        return view;
+    }
+
+    private void onFriendClick(Friend friend) {
+        Intent intent = new Intent(getContext(), FriendProfileActivity.class);
+        intent.putExtra("friend", friend);
+        startActivity(intent);
+    }
+
+    private void loadFriendsFromFirestore() {
+        db.collection("friends")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        favoriteList.clear();
+                        contactList.clear();
+
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            Friend friend = doc.toObject(Friend.class);
+                            friend.setId(doc.getId());
+                            if (friend.isFavorite()) {
+                                favoriteList.add(friend);
+                            } else {
+                                contactList.add(friend);
+                            }
+                        }
+
+                        List<FriendListItem> groupedFavoriteList = groupFriendsWithHeaders(favoriteList);
+                        List<FriendListItem> groupedContactList = groupFriendsWithHeaders(contactList);
+
+                        favoriteAdapter.setData(groupedFavoriteList);
+                        contactAdapter.setData(groupedContactList);
+                    } else {
+                        Log.w("ContactsFragment", "Error getting documents.", task.getException());
+                    }
+                });
+    }
+
+    private List<FriendListItem> groupFriendsWithHeaders(List<Friend> friends) {
+        List<FriendListItem> groupedList = new ArrayList<>();
+        Collections.sort(friends, Comparator.comparing(Friend::getName, String.CASE_INSENSITIVE_ORDER));
+
+        String lastHeader = "";
+        for (Friend friend : friends) {
+            String header = friend.getName().substring(0, 1).toUpperCase();
+            if (!header.equals(lastHeader)) {
+                groupedList.add(new SectionHeader(header));
+                lastHeader = header;
+            }
+            groupedList.add(friend);
+        }
+
+        return groupedList;
     }
 }
+
