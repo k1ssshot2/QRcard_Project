@@ -2,9 +2,12 @@ package com.example.qrcardproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.widget.Button;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +26,13 @@ public class LoginScreenActivity extends AppCompatActivity {
         Button btnLogin = findViewById(R.id.btnLogin);
         EditText emailEditText = findViewById(R.id.login_id);
         EditText passwordEditText = findViewById(R.id.login_pw);
+
+        ImageButton toggleButton = findViewById(R.id.buttonShowPassword);
+
+        toggleButton.setOnClickListener(v -> {
+            togglePasswordVisibility(passwordEditText, toggleButton);
+        });
+
 
 
         btnLogin.setOnClickListener(v -> {
@@ -56,5 +66,16 @@ public class LoginScreenActivity extends AppCompatActivity {
 
                     });
         });
+    }
+
+    private void togglePasswordVisibility(EditText editText, ImageButton imageButton) {
+        if (editText.getTransformationMethod().equals(PasswordTransformationMethod.getInstance())) {
+            editText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            imageButton.setImageResource(R.drawable.ic_visibility);
+        } else {
+            editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            imageButton.setImageResource(R.drawable.ic_visibility_off);
+        }
+        editText.setSelection(editText.getText().length());
     }
 }

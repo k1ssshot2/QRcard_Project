@@ -32,21 +32,43 @@
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:layout_marginTop="16dp"
+            android:drawableStart="@drawable/ic_email"
+            android:drawablePadding="8dp"
             android:background="@drawable/round_btn"
             android:backgroundTint="#ffffff"
             android:hint="Enter Your Email"
             android:inputType="textEmailAddress" />
 
-        <EditText
-            android:id="@+id/login_pw"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/round_btn"
-            android:backgroundTint="#ffffff"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:padding="15dp" />
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/login_pw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_btn"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawablePadding="8dp"
+                android:backgroundTint="#ffffff"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:padding="15dp" />
+
+            <ImageButton
+                android:id="@+id/buttonShowPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/login_pw"
+                android:layout_alignBottom="@id/login_pw"
+                android:layout_marginBottom="14dp"
+                android:layout_marginEnd="20dp"
+                android:background="@color/white"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_visibility_off" />
+
+        </RelativeLayout>
 
         <Button
             android:id="@+id/btnLogin"
