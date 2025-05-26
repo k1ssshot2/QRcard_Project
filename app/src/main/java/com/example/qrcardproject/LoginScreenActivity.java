@@ -39,7 +39,7 @@ public class LoginScreenActivity extends AppCompatActivity {
                             FirebaseFirestore.getInstance().collection("users")
                                     .get()
                                     .addOnSuccessListener(documentSnapshots -> {
-                                        if (documentSnapshots.isEmpty()) { // 유저 정보 있음 -> 홈화면 이동
+                                        if (!documentSnapshots.isEmpty()) { // 유저 정보 있음 -> 홈화면 이동
                                             Intent intent = new Intent(LoginScreenActivity.this, NaviActivity.class);
                                             startActivity(intent);
                                             finish();
@@ -50,7 +50,7 @@ public class LoginScreenActivity extends AppCompatActivity {
                                     });
                         } else {
                             // 로그인 실패
-                            Toast.makeText(LoginScreenActivity.this, "로그인 실패: \n" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginScreenActivity.this, "로그인 실패: \n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
 
 
