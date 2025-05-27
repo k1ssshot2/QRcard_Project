@@ -6,11 +6,16 @@ import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -76,6 +81,20 @@ public class RegisterActivity extends AppCompatActivity {
                 registerUser();
             }
         });
+
+        editPosition.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                // 키보드 내리기
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(editPosition.getWindowToken(), 0);
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     private void togglePasswordVisibility(EditText editText, ImageButton imageButton) {
@@ -110,11 +129,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (password.length() < 6) {
             editPassword.setError("비밀번호는 6자 이상이어야 합니다.");
+            Toast.makeText(this, "비밀번호는 6자 이상이어야 합니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!password.equals(confirmPassword)) {
             editConfirmPassword.setError("비밀번호가 일치하지 않습니다.");
+            Toast.makeText(this, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 

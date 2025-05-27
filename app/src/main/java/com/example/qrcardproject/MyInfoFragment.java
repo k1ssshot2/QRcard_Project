@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.view.KeyEvent;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,6 +60,13 @@ public class MyInfoFragment extends Fragment {
         currentUser = mAuth.getCurrentUser();
     }
 
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -97,6 +108,25 @@ public class MyInfoFragment extends Fragment {
             isConfirmNewPasswordVisible = !isConfirmNewPasswordVisible;
         });
 
+        // editPosition에서 엔터 누르면 키보드 내리기
+        editPosition.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+                hideKeyboard(v);
+                return true;
+            }
+            return false;
+        });
+
+// confirmNewPassword에서 엔터 누르면 키보드 내리기
+        confirmNewPassword.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+                hideKeyboard(v);
+                return true;
+            }
+            return false;
+        });
         return view;
     }
 
