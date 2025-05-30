@@ -13,6 +13,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -59,10 +62,19 @@ public class LoginScreenActivity extends AppCompatActivity {
                                         }
                                     });
                         } else {
-                            // 로그인 실패
-                            Toast.makeText(LoginScreenActivity.this, "로그인 실패: \n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                            Exception exception = task.getException();
 
+                            // 인터넷 연결 실패 시
+                            if (exception instanceof FirebaseAuthException && "ERROR_NETWORK_REQUEST_FALIED".equals(((FirebaseAuthException) exception).getErrorCode())) {
+                                Toast.makeText(LoginScreenActivity.this, "네트워크 오류입니다. 확인 후 다시 시도하세요.", Toast.LENGTH_SHORT).show();
+                            } else if (exception instanceof FirebaseAuthInvalidUserException) { //이메일 오류시
+                                Toast.makeText(LoginScreenActivity.this, "존재하지 않는 이메일입니다. ", Toast.LENGTH_SHORT).show();
+                            } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+                                Toast.makeText(LoginScreenActivity.this, "비밀번호가 올바르지 않습니다. ", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginScreenActivity.this, "로그인에 실패했습니다. ", Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
                     });
         });
