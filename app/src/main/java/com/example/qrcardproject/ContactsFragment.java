@@ -36,6 +36,12 @@ public class ContactsFragment extends Fragment {
     public ContactsFragment() {}
 
     @Override
+    public void onResume() {
+        super.onResume();
+        loadFriendsFromFirestore();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
@@ -64,7 +70,6 @@ public class ContactsFragment extends Fragment {
         startActivityForResult(intent, REQUEST_VIEW_FRIEND);
     }
     private void loadFriendsFromFirestore() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         db.collection("users")
@@ -79,6 +84,7 @@ public class ContactsFragment extends Fragment {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Friend friend = doc.toObject(Friend.class);
                             friend.setId(doc.getId());
+
                             if (friend.isFavorite()) {
                                 favoriteList.add(friend);
                             } else {
@@ -86,33 +92,42 @@ public class ContactsFragment extends Fragment {
                             }
                         }
 
-                        List<FriendListItem> groupedFavoriteList = groupFriendsWithHeaders(favoriteList);
-                        List<FriendListItem> groupedContactList = groupFriendsWithHeaders(contactList);
-
-                        favoriteAdapter.setData(groupedFavoriteList);
-                        contactAdapter.setData(groupedContactList);
+                        favoriteAdapter.setData(groupFriendsWithHeaders(favoriteList));
+                        contactAdapter.setData(groupFriendsWithHeaders(contactList));
                     } else {
-                        Log.w("ContactsFragment", "Error getting documents.", task.getException());
+                        Log.w("ContactsFragment", "불러오기 실패", task.getException());
                     }
                 });
     }
 
+
     private List<FriendListItem> groupFriendsWithHeaders(List<Friend> friends) {
         List<FriendListItem> groupedList = new ArrayList<>();
-        Collections.sort(friends, Comparator.comparing(Friend::getName, String.CASE_INSENSITIVE_ORDER));
+        Collections.sort(friends, Comparator.comparing(
+                f -> f.getName() != null ? f.getName().toLowerCase() : "", String.CASE_INSENSITIVE_ORDER));
 
         String lastHeader = "";
         for (Friend friend : friends) {
-            String header = friend.getName().substring(0, 1).toUpperCase();
+            String name = friend.getName();
+            String header;
+
+            if (name != null && !name.isEmpty()) {
+                header = name.substring(0, 1).toUpperCase();
+            } else {
+                header = "?";  // 이름이 비어 있거나 null이면 '?' 섹션으로
+            }
+
             if (!header.equals(lastHeader)) {
                 groupedList.add(new SectionHeader(header));
                 lastHeader = header;
             }
+
             groupedList.add(friend);
         }
 
         return groupedList;
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
