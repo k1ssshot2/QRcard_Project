@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
+
 
 import androidx.fragment.app.Fragment;
 
@@ -61,6 +65,18 @@ public class AddScanFragment extends Fragment {
 
         btnSave.setOnClickListener(v -> saveContact());
         btnCancel.setOnClickListener(v -> requireActivity());
+
+        editPosition.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_NULL) {
+                InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(editPosition.getWindowToken(), 0);
+                }
+                editPosition.clearFocus();
+                return true;
+            }
+            return false;
+        });
 
         return view;
     }
