@@ -71,6 +71,7 @@ public class ContactsFragment extends Fragment {
     }
     private void loadFriendsFromFirestore() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d("ContactsFragment", "현재 사용자 UID: " + currentUserId);
 
         db.collection("users")
                 .document(currentUserId)
@@ -81,9 +82,13 @@ public class ContactsFragment extends Fragment {
                         favoriteList.clear();
                         contactList.clear();
 
+                        Log.d("ContactsFragment", "Firestore 친구 문서 개수: " + task.getResult().size());
+
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Friend friend = doc.toObject(Friend.class);
                             friend.setId(doc.getId());
+
+                            Log.d("ContactsFragment", "가져온 친구: " + friend.getName() + " / 즐겨찾기: " + friend.isFavorite());
 
                             if (friend.isFavorite()) {
                                 favoriteList.add(friend);
@@ -92,13 +97,17 @@ public class ContactsFragment extends Fragment {
                             }
                         }
 
+                        Log.d("ContactsFragment", "즐겨찾기 수: " + favoriteList.size());
+                        Log.d("ContactsFragment", "일반 연락처 수: " + contactList.size());
+
                         favoriteAdapter.setData(groupFriendsWithHeaders(favoriteList));
                         contactAdapter.setData(groupFriendsWithHeaders(contactList));
                     } else {
-                        Log.w("ContactsFragment", "불러오기 실패", task.getException());
+                        Log.w("ContactsFragment", "Firestore 불러오기 실패", task.getException());
                     }
                 });
     }
+
 
 
     private List<FriendListItem> groupFriendsWithHeaders(List<Friend> friends) {

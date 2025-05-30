@@ -34,10 +34,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_HEADER) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_contacts, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.section_header, parent, false);
             return new HeaderViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contacts, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
             return new FriendViewHolder(view);
         }
     }
