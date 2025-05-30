@@ -12,7 +12,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.content.Context;
 
-
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,12 +27,12 @@ public class AddScanFragment extends Fragment {
 
     private EditText editName, editEmail, editPhone, editDepartment, editPosition;
 
-    private String getSafeString(Object value) {
-        return value != null ? value.toString() : "";
-    }
-
     public AddScanFragment() {
         // Required empty public constructor
+    }
+
+    private String getSafeString(Object value) {
+        return value != null ? value.toString() : "";
     }
 
     @Override
@@ -41,43 +40,57 @@ public class AddScanFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_scan, container, false);
 
-        EditText nameEdit = view.findViewById(R.id.editName);
-        EditText emailEdit = view.findViewById(R.id.editEmail);
-        EditText phoneEdit = view.findViewById(R.id.editPhone);
-        EditText departmentEdit = view.findViewById(R.id.editDepartment);
-        EditText positionEdit = view.findViewById(R.id.editPosition);
+        // Firestore 초기화
+        db = FirebaseFirestore.getInstance();
 
-        // Cancel 버튼 기능
+        // 필드 변수에 뷰 연결
+        editName = view.findViewById(R.id.editName);
+        editEmail = view.findViewById(R.id.editEmail);
+        editPhone = view.findViewById(R.id.editPhone);
+        editDepartment = view.findViewById(R.id.editDepartment);
+        editPosition = view.findViewById(R.id.editPosition);
+
+        // 키보드 Enter 시 자판 내리기 설정
+        setupKeyboardDismiss(editName);
+        setupKeyboardDismiss(editEmail);
+        setupKeyboardDismiss(editPhone);
+        setupKeyboardDismiss(editDepartment);
+        setupKeyboardDismiss(editPosition);
+
+        // Cancel 버튼
         Button cancelButton = view.findViewById(R.id.btnCancel);
-        cancelButton.setOnClickListener(v -> {
-            requireActivity().getSupportFragmentManager().popBackStack();
-        });
+        cancelButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
+        // Save 버튼
+        Button saveButton = view.findViewById(R.id.btnSave);
+        saveButton.setOnClickListener(v -> saveContact());
+
+        // QR 코드 데이터 처리
         Bundle args = getArguments();
         if (args != null) {
             String scannedData = args.getString("scanned_info");
             if (scannedData != null && scannedData.contains("uid:")) {
                 String uid = parseUidFromScannedData(scannedData);
-
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                db.collection("users").document(uid).get()
-                        .addOnSuccessListener(document -> {
-                            if (document.exists()) {
-                                nameEdit.setText(document.getString("name"));
-                                emailEdit.setText(document.getString("email"));
-                                phoneEdit.setText(document.getString("phone"));
-                                departmentEdit.setText(document.getString("department"));
-                                positionEdit.setText(document.getString("position"));
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(getContext(), "사용자 정보 불러오기 실패", Toast.LENGTH_SHORT).show();
-                        });
+                loadUserData(uid);
             }
         }
 
         return view;
+    }
+
+    private void setupKeyboardDismiss(EditText editText) {
+        editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        editText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                }
+                editText.clearFocus();
+                return true;
+            }
+            return false;
+        });
     }
 
     private String parseUidFromScannedData(String scannedData) {
@@ -90,8 +103,6 @@ public class AddScanFragment extends Fragment {
     }
 
     private void loadUserData(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         db.collection("users").document(userId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -117,17 +128,25 @@ public class AddScanFragment extends Fragment {
     }
 
     private void saveContact() {
+        String name = editName.getText().toString().trim();
+        String email = editEmail.getText().toString().trim();
+
+        if (name.isEmpty() || email.isEmpty()) {
+            Toast.makeText(getContext(), "이름과 이메일은 필수입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Map<String, Object> contact = new HashMap<>();
-        contact.put("name", editName.getText().toString());
-        contact.put("email", editEmail.getText().toString());
-        contact.put("phone", editPhone.getText().toString());
-        contact.put("department", editDepartment.getText().toString());
-        contact.put("position", editPosition.getText().toString());
+        contact.put("name", name);
+        contact.put("email", email);
+        contact.put("phone", editPhone.getText().toString().trim());
+        contact.put("department", editDepartment.getText().toString().trim());
+        contact.put("position", editPosition.getText().toString().trim());
 
         db.collection("contacts").add(contact)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(getContext(), "연락처가 저장되었습니다.", Toast.LENGTH_SHORT).show();
-                    requireActivity().onBackPressed();; // 저장 후 이전 화면으로
+                    requireActivity().getSupportFragmentManager().popBackStack();
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "연락처 저장 실패", e);
