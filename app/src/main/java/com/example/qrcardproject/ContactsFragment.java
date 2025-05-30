@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -63,7 +64,12 @@ public class ContactsFragment extends Fragment {
         startActivityForResult(intent, REQUEST_VIEW_FRIEND);
     }
     private void loadFriendsFromFirestore() {
-        db.collection("friends")
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        db.collection("users")
+                .document(currentUserId)
+                .collection("friends")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
