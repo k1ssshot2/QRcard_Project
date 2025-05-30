@@ -1,5 +1,6 @@
 package com.example.qrcardproject;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -34,6 +35,7 @@ public class MyInfoFragment extends Fragment {
 
     private Button btnSave;
     private Button btnLogout;
+    private Button btnDeleteAccount;
     private ImageView imageDefault;
     private EditText editName;
     private EditText editEmail;
@@ -74,6 +76,7 @@ public class MyInfoFragment extends Fragment {
 
         btnSave = view.findViewById(R.id.btnSave);
         btnLogout = view.findViewById(R.id.btnLogout);
+        btnDeleteAccount = view.findViewById(R.id.btnDeleteAccount);
         imageDefault = view.findViewById(R.id.imageDefault);
         editName = view.findViewById(R.id.editName);
         editEmail = view.findViewById(R.id.editEmail);
@@ -96,6 +99,10 @@ public class MyInfoFragment extends Fragment {
 
         btnLogout.setOnClickListener(v -> {
             logoutUser();
+        });
+
+        btnDeleteAccount.setOnClickListener(v -> {
+            deleteAccountConfirmDialog();
         });
 
         buttonShowNewPassword.setOnClickListener(v -> {
@@ -224,5 +231,55 @@ public class MyInfoFragment extends Fragment {
             imageButton.setImageResource(R.drawable.ic_visibility_off);
         }
         editText.setSelection(editText.getText().length());
+    }
+
+    private void deleteAccountConfirmDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("계정 삭제")
+                .setMessage("정말 탈퇴하시겠습니까?")
+                .setPositiveButton("예", (dialog, which) -> {
+                    deleteUserAccount();
+                })
+                .setNegativeButton("아니오", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    private void deleteUserAccount() {
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "로그인된 사용자가 없습니다. 계정을 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String userId = currentUser.getUid();
+        DocumentReference userDocRef = db.collection("users").document(userId);
+
+        userDocRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Firestore 사용자 문서 삭제 성공: " + userId);
+                    deleteFirebaseAuthAccount();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Firestore 사용자 문서 삭제 실패", e);
+                    Toast.makeText(getContext(), "계정 정보 삭제에 실패했습니다: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void deleteFirebaseAuthAccount() {
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "로그인된 사용자가 없습니다. 인증 계정을 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        currentUser.delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "계정이 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                    logoutUser();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Firebase Authentication 계정 삭제 실패", e);
+                    Toast.makeText(getContext(), "계정 삭제 실패: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 }
