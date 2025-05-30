@@ -41,45 +41,54 @@ public class AddScanFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_scan, container, false);
 
-        db = FirebaseFirestore.getInstance();
+        EditText nameEdit = view.findViewById(R.id.editName);
+        EditText emailEdit = view.findViewById(R.id.editEmail);
+        EditText phoneEdit = view.findViewById(R.id.editPhone);
+        EditText departmentEdit = view.findViewById(R.id.editDepartment);
+        EditText positionEdit = view.findViewById(R.id.editPosition);
 
-        // View 바인딩
-        editName = view.findViewById(R.id.editName);
-        editEmail = view.findViewById(R.id.editEmail);
-        editPhone = view.findViewById(R.id.editPhone);
-        editDepartment = view.findViewById(R.id.editDepartment);
-        editPosition = view.findViewById(R.id.editPosition);
-        Button btnSave = view.findViewById(R.id.btnSave);
-        Button btnCancel = view.findViewById(R.id.btnCancel);
+        // Cancel 버튼 기능
+        Button cancelButton = view.findViewById(R.id.btnCancel);
+        cancelButton.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
 
-        // ✅ Bundle로부터 scannedUserId 추출
         Bundle args = getArguments();
         if (args != null) {
-            String scannedUserId = args.getString("scanned_info");
-            if (scannedUserId != null) {
-                loadUserData(scannedUserId); // Firestore에서 정보 불러오기
-            } else {
-                Toast.makeText(getContext(), "스캔된 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+            String scannedData = args.getString("scanned_info");
+            if (scannedData != null && scannedData.contains("uid:")) {
+                String uid = parseUidFromScannedData(scannedData);
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                db.collection("users").document(uid).get()
+                        .addOnSuccessListener(document -> {
+                            if (document.exists()) {
+                                nameEdit.setText(document.getString("name"));
+                                emailEdit.setText(document.getString("email"));
+                                phoneEdit.setText(document.getString("phone"));
+                                departmentEdit.setText(document.getString("department"));
+                                positionEdit.setText(document.getString("position"));
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "사용자 정보 불러오기 실패", Toast.LENGTH_SHORT).show();
+                        });
             }
         }
 
-        btnSave.setOnClickListener(v -> saveContact());
-        btnCancel.setOnClickListener(v -> requireActivity());
-
-        editPosition.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_NULL) {
-                InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(editPosition.getWindowToken(), 0);
-                }
-                editPosition.clearFocus();
-                return true;
-            }
-            return false;
-        });
-
         return view;
     }
+
+    private String parseUidFromScannedData(String scannedData) {
+        for (String line : scannedData.split("\n")) {
+            if (line.startsWith("uid:")) {
+                return line.substring(4).trim();
+            }
+        }
+        return null;
+    }
+
     private void loadUserData(String userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
