@@ -5,6 +5,8 @@ public class Friend implements Serializable, FriendListItem{
     private String id;           // Firestore 문서 ID
     private String name;
     private String email;
+
+    private String phone;
     private String department;
     private String position;
     private boolean favorite;
@@ -13,9 +15,10 @@ public class Friend implements Serializable, FriendListItem{
     public Friend() {}
 
     // 생성자 (id는 Firestore에서 나중에 설정)
-    public Friend(String name, String email, String department, String position, boolean favorite) {
+    public Friend(String name, String email, String Phone,String department, String position, boolean favorite) {
         this.name = name;
         this.email = email;
+        this.phone = phone;
         this.department = department;
         this.position = position;
         this.favorite = favorite;
@@ -32,6 +35,8 @@ public class Friend implements Serializable, FriendListItem{
     public String getEmail() {
         return email;
     }
+
+    public String getPhone() {return phone;}
 
     public String getDepartment() {
         return department;
@@ -57,6 +62,10 @@ public class Friend implements Serializable, FriendListItem{
         this.email = email;
     }
 
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public void setDepartment(String department) {
         this.department = department;
     }
@@ -68,6 +77,8 @@ public class Friend implements Serializable, FriendListItem{
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
+
+
 }
 
 

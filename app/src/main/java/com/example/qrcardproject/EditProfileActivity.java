@@ -11,7 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    private EditText etName, etEmail, etDepartment, etPosition;
+    private EditText etName, etEmail, etPhone, etDepartment, etPosition;
     private Button btnEdit;
     private FirebaseFirestore db;
     private Friend friend;
@@ -19,13 +19,13 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_friend_profile);
+        setContentView(R.layout.activity_edit_profile);
 
         db = FirebaseFirestore.getInstance();
 
-
         etName = findViewById(R.id.editName);
         etEmail = findViewById(R.id.editEmail);
+        etPhone = findViewById(R.id.editPhone);
         etDepartment = findViewById(R.id.editDepartment);
         etPosition = findViewById(R.id.editPosition);
         btnEdit = findViewById(R.id.btnEdit);
@@ -35,6 +35,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (friend != null) {
             etName.setText(friend.getName());
             etEmail.setText(friend.getEmail());
+            etPhone.setText(friend.getPhone());
             etDepartment.setText(friend.getDepartment());
             etPosition.setText(friend.getPosition());
         }
@@ -42,6 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
         btnEdit.setOnClickListener(v -> {
             String updatedName = etName.getText().toString();
             String updatedEmail = etEmail.getText().toString();
+            String updatedPhone = etPhone.getText().toString();
             String updatedDepartment = etDepartment.getText().toString();
             String updatedPosition = etPosition.getText().toString();
 
@@ -50,6 +52,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         .update(
                                 "name", updatedName,
                                 "email", updatedEmail,
+                                "phone", updatedPhone,
                                 "department", updatedDepartment,
                                 "position", updatedPosition
                         )

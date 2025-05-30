@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+
 public class ContactsFragment extends Fragment {
 
     private RecyclerView favoriteRecyclerView;
@@ -28,6 +30,7 @@ public class ContactsFragment extends Fragment {
     private List<Friend> favoriteList;
     private List<Friend> contactList;
     private FirebaseFirestore db;
+    private static final int REQUEST_VIEW_FRIEND = 1001;
 
     public ContactsFragment() {}
 
@@ -55,11 +58,10 @@ public class ContactsFragment extends Fragment {
     }
 
     private void onFriendClick(Friend friend) {
-        Intent intent = new Intent(getContext(), FriendProfileActivity.class);
+        Intent intent = new Intent(getContext(), FriendProfileFragment.class);
         intent.putExtra("friend", friend);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_VIEW_FRIEND);
     }
-
     private void loadFriendsFromFirestore() {
         db.collection("friends")
                 .get()
@@ -105,5 +107,44 @@ public class ContactsFragment extends Fragment {
 
         return groupedList;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_VIEW_FRIEND && resultCode == getActivity().RESULT_OK && data != null) {
+            String deletedEmail = data.getStringExtra("friendEmail");
+            if (deletedEmail != null) {
+                removeFriendByEmail(deletedEmail);
+            }
+        }
+    }
+
+    private void removeFriendByEmail(String email) {
+        boolean removed = false;
+
+        for (int i = 0; i < contactList.size(); i++) {
+            if (contactList.get(i).getEmail().equals(email)) {
+                contactList.remove(i);
+                removed = true;
+                break;
+            }
+        }
+
+        if (!removed) {
+            for (int i = 0; i < favoriteList.size(); i++) {
+                if (favoriteList.get(i).getEmail().equals(email)) {
+                    favoriteList.remove(i);
+                    break;
+                }
+            }
+        }
+
+        List<FriendListItem> groupedFavoriteList = groupFriendsWithHeaders(favoriteList);
+        List<FriendListItem> groupedContactList = groupFriendsWithHeaders(contactList);
+
+        favoriteAdapter.setData(groupedFavoriteList);
+        contactAdapter.setData(groupedContactList);
+    }
 }
+
 
