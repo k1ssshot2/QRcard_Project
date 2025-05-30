@@ -49,6 +49,7 @@ public class AddScanFragment extends Fragment {
         // Firestore 초기화
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
 
         // 필드 변수에 뷰 연결
         editName = view.findViewById(R.id.editName);
