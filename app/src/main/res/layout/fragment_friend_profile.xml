@@ -56,15 +56,34 @@
                 android:inputType="textEmailAddress"
                 android:padding="7dp" />
 
-            <EditText
-                android:id="@+id/editPhone"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:background="@drawable/edittextshape"
-                android:hint="@string/phone"
-                android:inputType="phone"
-                android:padding="7dp" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/editPhone"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittextshape"
+                    android:hint="@string/phone"
+                    android:inputType="phone"
+                    android:padding="7dp" />
+
+                <ImageButton
+                    android:id="@+id/btnCall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/baseline_call_24"
+                    android:contentDescription="전화 걸기"
+                    android:padding="10dp" />
+            </LinearLayout>
+
+
 
             <EditText
                 android:id="@+id/editDepartment"

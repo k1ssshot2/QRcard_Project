@@ -2,20 +2,33 @@ package com.example.qrcardproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Button;
+import android.widget.TextView;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.content.Context;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import android.widget.ImageButton;
+import android.widget.Toast;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
 
 public class FriendProfileActivity extends AppCompatActivity {
 
-    private EditText editName, editEmail, editDepartment, editPosition;
+    private EditText editName, editEmail, editDepartment, editPosition, editPhone;
     private Button editButton;
 
+    private ImageButton btnCall;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +39,10 @@ public class FriendProfileActivity extends AppCompatActivity {
         editDepartment = findViewById(R.id.editDepartment);
         editPosition = findViewById(R.id.editPosition);
         editButton = findViewById(R.id.btnEdit);
+        editPhone = findViewById(R.id.editPhone);
+        btnCall = findViewById(R.id.btnCall);
 
-        // 인텐트에서 데이터 가져오기
+
         Intent intent = getIntent();
         Friend friend = (Friend) intent.getSerializableExtra("friend");
 
@@ -55,6 +70,42 @@ public class FriendProfileActivity extends AppCompatActivity {
             }
             return false;
         });
+        if (friend != null) {
+            editPhone.setText(friend.getPhone());
+        }
+
+        btnCall.setOnClickListener(v -> {
+            View view = getLayoutInflater().inflate(R.layout.fragment_bottom_call, null);
+            BottomSheetDialog dialog = new BottomSheetDialog(FriendProfileActivity.this);
+            dialog.setContentView(view);
+
+            TextView tvPhoneCall = view.findViewById(R.id.tvPhoneCall);
+
+            tvPhoneCall.setOnClickListener(callView -> {
+                String phoneNumber = editPhone.getText().toString();
+                if (phoneNumber.isEmpty()) {
+                    Toast.makeText(FriendProfileActivity.this, "전화번호가 없습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + phoneNumber));
+                if (ContextCompat.checkSelfPermission(FriendProfileActivity.this, Manifest.permission.CALL_PHONE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    startActivity(callIntent);
+                } else {
+                    ActivityCompat.requestPermissions(FriendProfileActivity.this,
+                            new String[]{Manifest.permission.CALL_PHONE}, 1);
+                }
+
+                dialog.dismiss();
+            });
+
+            dialog.show();
+        });
+
+
+
 
     }
 }
