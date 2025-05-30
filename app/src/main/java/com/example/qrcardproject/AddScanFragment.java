@@ -15,6 +15,8 @@ import android.content.Context;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,10 @@ public class AddScanFragment extends Fragment {
     private static final String TAG = "AddScanFragment";
 
     private FirebaseFirestore db;
+
+    private FirebaseAuth mAuth;
+
+    private FirebaseUser currentUser;
 
     private EditText editName, editEmail, editPhone, editDepartment, editPosition;
 
@@ -42,6 +48,7 @@ public class AddScanFragment extends Fragment {
 
         // Firestore 초기화
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         // 필드 변수에 뷰 연결
         editName = view.findViewById(R.id.editName);
@@ -76,6 +83,15 @@ public class AddScanFragment extends Fragment {
         }
 
         return view;
+    }
+
+    public String getCurrentUserUid() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+           return currentUser.getUid();
+        } else {
+            return null;
+        }
     }
 
     private void setupKeyboardDismiss(EditText editText) {
@@ -143,7 +159,8 @@ public class AddScanFragment extends Fragment {
         contact.put("department", editDepartment.getText().toString().trim());
         contact.put("position", editPosition.getText().toString().trim());
 
-        db.collection("contacts").add(contact)
+        String userId = currentUser.getUid();
+        db.collection("users").document(userId).collection("friends").add(contact)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(getContext(), "연락처가 저장되었습니다.", Toast.LENGTH_SHORT).show();
                     requireActivity().getSupportFragmentManager().popBackStack();
