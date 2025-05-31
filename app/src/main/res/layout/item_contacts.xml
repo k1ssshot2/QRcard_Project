@@ -33,7 +33,7 @@
         android:gravity="center_vertical">
 
         <TextView
-            android:id="@+id/tvName"
+            android:id="@+id/friendName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Friend Name"
@@ -52,12 +52,12 @@
     <ImageView
         android:id="@+id/btnFavorite"
         android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="12dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:contentDescription="즐겨찾기"
-        android:src="@drawable/ic_star_border"
+        android:layout_marginStart="12dp"
         android:clickable="true"
-        android:focusable="true" />
+        android:contentDescription="즐겨찾기"
+        android:focusable="true"
+        android:src="@drawable/ic_star_border" />
 
 </LinearLayout>
