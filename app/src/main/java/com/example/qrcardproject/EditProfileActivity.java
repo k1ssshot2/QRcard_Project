@@ -1,5 +1,6 @@
 package com.example.qrcardproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -7,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class EditProfileActivity extends AppCompatActivity {
@@ -40,29 +42,34 @@ public class EditProfileActivity extends AppCompatActivity {
             etPosition.setText(friend.getPosition());
         }
 
+        // 수정 완료 버튼 클릭 시
         btnEdit.setOnClickListener(v -> {
-            String updatedName = etName.getText().toString();
-            String updatedEmail = etEmail.getText().toString();
-            String updatedPhone = etPhone.getText().toString();
-            String updatedDepartment = etDepartment.getText().toString();
-            String updatedPosition = etPosition.getText().toString();
+            // 예시: 수정된 Friend 객체 생성
+            Friend updatedFriend = new Friend();
+            updatedFriend.setName(etName.getText().toString());
+            updatedFriend.setEmail(etEmail.getText().toString());
+            updatedFriend.setPhone(etPhone.getText().toString());
+            updatedFriend.setDepartment(etDepartment.getText().toString());
+            updatedFriend.setPosition(etPosition.getText().toString());
 
-            if (friend.getId() != null) {
-                db.collection("friends").document(friend.getId())
-                        .update(
-                                "name", updatedName,
-                                "email", updatedEmail,
-                                "phone", updatedPhone,
-                                "department", updatedDepartment,
-                                "position", updatedPosition
-                        )
-                        .addOnSuccessListener(aVoid -> {
-                            Toast.makeText(this, "프로필이 수정되었습니다", Toast.LENGTH_SHORT).show();
-                            finish();
-                        })
-                        .addOnFailureListener(e ->
-                                Toast.makeText(this, "수정 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-            }
+            // Firestore에 업데이트
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(currentUserId)
+                    .collection("friends")
+                    .document(updatedFriend.getId())
+                    .set(updatedFriend)
+                    .addOnSuccessListener(aVoid -> {
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("updatedFriend", updatedFriend);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "수정 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         });
+
     }
 }

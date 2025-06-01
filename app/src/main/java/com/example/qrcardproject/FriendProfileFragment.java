@@ -19,10 +19,11 @@ import androidx.fragment.app.Fragment;
 
 public class FriendProfileFragment extends Fragment {
 
+    private static final int REQUEST_EDIT_FRIEND = 2001;
+
     private EditText editName, editEmail, editDepartment, editPosition, editPhone;
     private Button editButton, deleteButton;
     private Friend friend;
-
     private ImageButton btnCall;
 
     @Override
@@ -36,22 +37,17 @@ public class FriendProfileFragment extends Fragment {
         editPosition = rootView.findViewById(R.id.editPosition);
         editButton = rootView.findViewById(R.id.btnEdit);
         deleteButton = rootView.findViewById(R.id.btnDelete);
+        btnCall = rootView.findViewById(R.id.btnCall);
 
         if (getArguments() != null) {
             friend = (Friend) getArguments().getSerializable("friend");
-            if (friend != null) {
-                editName.setText(friend.getName());
-                editEmail.setText(friend.getEmail());
-                editPhone.setText(friend.getPhone());
-                editDepartment.setText(friend.getDepartment());
-                editPosition.setText(friend.getPosition());
-            }
+            setFriendInfo(friend);
         }
 
         editButton.setOnClickListener(v -> {
             Intent editIntent = new Intent(getActivity(), EditProfileActivity.class);
             editIntent.putExtra("friend", friend);
-            startActivity(editIntent);
+            startActivityForResult(editIntent, REQUEST_EDIT_FRIEND);
         });
 
         deleteButton.setOnClickListener(v -> {
@@ -69,11 +65,9 @@ public class FriendProfileFragment extends Fragment {
                     .show();
         });
 
-        btnCall = rootView.findViewById(R.id.btnCall);
-
         btnCall.setOnClickListener(v -> {
             if (friend != null && friend.getPhone() != null && !friend.getPhone().isEmpty()) {
-                Intent intent = new Intent(Intent.ACTION_DIAL);  // ACTION_CALL은 위험 권한이므로 권장되지 않음
+                Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(android.net.Uri.parse("tel:" + friend.getPhone()));
                 startActivity(intent);
             } else {
@@ -81,8 +75,29 @@ public class FriendProfileFragment extends Fragment {
             }
         });
 
-
         return rootView;
+    }
+
+    private void setFriendInfo(Friend friend) {
+        if (friend != null) {
+            editName.setText(friend.getName());
+            editEmail.setText(friend.getEmail());
+            editPhone.setText(friend.getPhone());
+            editDepartment.setText(friend.getDepartment());
+            editPosition.setText(friend.getPosition());
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_EDIT_FRIEND && resultCode == RESULT_OK && data != null) {
+            Friend updatedFriend = (Friend) data.getSerializableExtra("updatedFriend");
+            if (updatedFriend != null) {
+                this.friend = updatedFriend;
+                setFriendInfo(friend);
+            }
+        }
     }
 
     public static FriendProfileFragment newInstance(Friend friend) {
@@ -93,5 +108,3 @@ public class FriendProfileFragment extends Fragment {
         return fragment;
     }
 }
-
-
