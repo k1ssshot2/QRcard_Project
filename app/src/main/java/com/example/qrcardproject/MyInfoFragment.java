@@ -25,7 +25,9 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import com.example.qrcardproject.R;
 
@@ -177,6 +179,7 @@ public class MyInfoFragment extends Fragment {
         String confirmPass = confirmNewPassword.getText().toString();
 
         DocumentReference userRef = db.collection("users").document(currentUser.getUid());
+
         userRef.update(
                 "name", name,
                 "email", email,
@@ -185,6 +188,18 @@ public class MyInfoFragment extends Fragment {
                 "position", position
         ).addOnSuccessListener(aVoid -> {
             Toast.makeText(getContext(), "프로필 정보가 업데이트되었습니다.", Toast.LENGTH_SHORT).show();
+
+            // 🔽 변경된 내 정보로 친구 DB도 업데이트
+            Friend updatedFriend = new Friend();
+            updatedFriend.setId(currentUser.getUid());
+            updatedFriend.setName(name);
+            updatedFriend.setEmail(email);
+            updatedFriend.setPhone(phone);
+            updatedFriend.setDepartment(department);
+            updatedFriend.setPosition(position);
+
+            updateMyInfoInFriends(currentUser.getUid(), updatedFriend);
+
         }).addOnFailureListener(e -> {
             Log.e(TAG, "프로필 정보 업데이트 실패", e);
             Toast.makeText(getContext(), "프로필 정보 업데이트에 실패했습니다: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -211,6 +226,43 @@ public class MyInfoFragment extends Fragment {
                 Toast.makeText(getContext(), "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void updateMyInfoInFriends(String myUid, Friend updatedFriendData) {
+        db.collection("users")
+                .get()
+                .addOnSuccessListener(usersSnapshot -> {
+                    for (DocumentSnapshot userDoc : usersSnapshot) {
+                        String userId = userDoc.getId();
+
+                        // 내 자신의 friends 컬렉션은 제외
+                        if (userId.equals(myUid)) continue;
+
+                        DocumentReference friendRef = db.collection("users")
+                                .document(userId)
+                                .collection("friends")
+                                .document(myUid);
+
+                        friendRef.get().addOnSuccessListener(friendSnapshot -> {
+                            if (friendSnapshot.exists()) {
+                                friendRef.update(
+                                        "name", updatedFriendData.getName(),
+                                        "email", updatedFriendData.getEmail(),
+                                        "phone", updatedFriendData.getPhone(),
+                                        "department", updatedFriendData.getDepartment(),
+                                        "position", updatedFriendData.getPosition()
+                                ).addOnSuccessListener(aVoid -> {
+                                    Log.d(TAG, "친구 목록에서 내 정보 업데이트 성공: " + userId);
+                                }).addOnFailureListener(e -> {
+                                    Log.e(TAG, "친구 목록에서 내 정보 업데이트 실패: " + userId, e);
+                                });
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "전체 사용자 가져오기 실패", e);
+                });
     }
 
     private void logoutUser() {

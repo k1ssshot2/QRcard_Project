@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;  // 추가된 import
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,37 +19,35 @@ import androidx.fragment.app.Fragment;
 
 public class FriendProfileFragment extends Fragment {
 
-    private TextView nameTextView, emailTextView, phoneTextView, departmentTextView, positionTextView;
+    private static final int REQUEST_EDIT_FRIEND = 2001;
+
+    private EditText editName, editEmail, editDepartment, editPosition, editPhone;
     private Button editButton, deleteButton;
     private Friend friend;
+    private ImageButton btnCall;
 
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friend_profile, container, false);
 
-        nameTextView = rootView.findViewById(R.id.editName);
-        emailTextView = rootView.findViewById(R.id.editEmail);
-        phoneTextView = rootView.findViewById(R.id.editPhone);
-        departmentTextView = rootView.findViewById(R.id.editDepartment);
-        positionTextView = rootView.findViewById(R.id.editPosition);
+        editName = rootView.findViewById(R.id.editName);
+        editEmail = rootView.findViewById(R.id.editEmail);
+        editPhone = rootView.findViewById(R.id.editPhone);
+        editDepartment = rootView.findViewById(R.id.editDepartment);
+        editPosition = rootView.findViewById(R.id.editPosition);
         editButton = rootView.findViewById(R.id.btnEdit);
         deleteButton = rootView.findViewById(R.id.btnDelete);
+        btnCall = rootView.findViewById(R.id.btnCall);
 
         if (getArguments() != null) {
             friend = (Friend) getArguments().getSerializable("friend");
-            if (friend != null) {
-                nameTextView.setText(friend.getName());
-                emailTextView.setText(friend.getEmail());
-                phoneTextView.setText(friend.getPhone());
-                departmentTextView.setText(friend.getDepartment());
-                positionTextView.setText(friend.getPosition());
-            }
+            setFriendInfo(friend);
         }
 
         editButton.setOnClickListener(v -> {
             Intent editIntent = new Intent(getActivity(), EditProfileActivity.class);
             editIntent.putExtra("friend", friend);
-            startActivity(editIntent);
+            startActivityForResult(editIntent, REQUEST_EDIT_FRIEND);
         });
 
         deleteButton.setOnClickListener(v -> {
@@ -65,9 +65,40 @@ public class FriendProfileFragment extends Fragment {
                     .show();
         });
 
+        btnCall.setOnClickListener(v -> {
+            if (friend != null && friend.getPhone() != null && !friend.getPhone().isEmpty()) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(android.net.Uri.parse("tel:" + friend.getPhone()));
+                startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "전화번호가 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return rootView;
     }
 
+    private void setFriendInfo(Friend friend) {
+        if (friend != null) {
+            editName.setText(friend.getName());
+            editEmail.setText(friend.getEmail());
+            editPhone.setText(friend.getPhone());
+            editDepartment.setText(friend.getDepartment());
+            editPosition.setText(friend.getPosition());
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_EDIT_FRIEND && resultCode == RESULT_OK && data != null) {
+            Friend updatedFriend = (Friend) data.getSerializableExtra("updatedFriend");
+            if (updatedFriend != null) {
+                this.friend = updatedFriend;
+                setFriendInfo(friend);
+            }
+        }
+    }
 
     public static FriendProfileFragment newInstance(Friend friend) {
         FriendProfileFragment fragment = new FriendProfileFragment();
@@ -77,5 +108,3 @@ public class FriendProfileFragment extends Fragment {
         return fragment;
     }
 }
-
-
