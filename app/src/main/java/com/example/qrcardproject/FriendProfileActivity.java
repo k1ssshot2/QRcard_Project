@@ -2,50 +2,111 @@ package com.example.qrcardproject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Button;
+import android.widget.TextView;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
+import android.widget.ImageButton;
+import android.widget.Toast;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+
 
 public class FriendProfileActivity extends AppCompatActivity {
 
-    private static final String TAG = "FriendProfileActivity";
+    private EditText editName, editEmail, editDepartment, editPosition, editPhone;
+    private Button editButton;
 
+    private ImageButton btnCall;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend_profile); // activity_friend_profile.xml 내에 FrameLayout이 있어야 함 (id: fragment_container)
+        setContentView(R.layout.fragment_friend_profile);
 
-        // Intent에서 Friend 객체 가져오기
+        editName = findViewById(R.id.editName);
+        editEmail = findViewById(R.id.editEmail);
+        editDepartment = findViewById(R.id.editDepartment);
+        editPosition = findViewById(R.id.editPosition);
+        editButton = findViewById(R.id.btnEdit);
+        editPhone = findViewById(R.id.editPhone);
+        btnCall = findViewById(R.id.btnCall);
+
+
         Intent intent = getIntent();
         Friend friend = (Friend) intent.getSerializableExtra("friend");
 
-        // Friend 객체가 null인 경우, 에러 로그 출력하고 종료
-        if (friend == null) {
-            Log.e(TAG, "Friend is null. Cannot load profile.");
-            Toast.makeText(this, "친구 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
-            finish();  // 안전하게 종료
-            return;
+        if (friend != null) {
+            editName.setText(friend.getName());
+            editEmail.setText(friend.getEmail());
+            editDepartment.setText(friend.getDepartment());
+            editPosition.setText(friend.getPosition());
         }
 
-        // Friend 객체가 null이 아니면 정보 로깅
-        Log.d(TAG, "Friend loaded: " + friend.getName());  // Friend 객체의 이름을 로그에 출력
+        editButton.setOnClickListener(v -> {
+            Intent editIntent = new Intent(this, EditProfileActivity.class);
+            editIntent.putExtra("friend", friend);
+            startActivity(editIntent);
+        });
 
-        // savedInstanceState가 null일 경우에만 Fragment를 새로 생성하여 추가
-        if (savedInstanceState == null) {
-            // Friend 객체를 인자로 하는 FriendProfileFragment 인스턴스 생성
-            FriendProfileFragment fragment = FriendProfileFragment.newInstance(friend);
-
-            // FragmentTransaction을 사용하여 FriendProfileFragment를 화면에 추가
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container, fragment);  // FrameLayout에 FriendProfileFragment 교체
-            transaction.commit();
+        editPosition.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(editPosition.getWindowToken(), 0);
+                }
+                editPosition.clearFocus();
+                return true;
+            }
+            return false;
+        });
+        if (friend != null) {
+            editPhone.setText(friend.getPhone());
         }
+
+        btnCall.setOnClickListener(v -> {
+            View view = getLayoutInflater().inflate(R.layout.fragment_bottom_call, null);
+            BottomSheetDialog dialog = new BottomSheetDialog(FriendProfileActivity.this);
+            dialog.setContentView(view);
+
+            TextView tvPhoneCall = view.findViewById(R.id.tvPhoneCall);
+
+            tvPhoneCall.setOnClickListener(callView -> {
+                String phoneNumber = editPhone.getText().toString();
+                if (phoneNumber.isEmpty()) {
+                    Toast.makeText(FriendProfileActivity.this, "전화번호가 없습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + phoneNumber));
+                if (ContextCompat.checkSelfPermission(FriendProfileActivity.this, Manifest.permission.CALL_PHONE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    startActivity(callIntent);
+                } else {
+                    ActivityCompat.requestPermissions(FriendProfileActivity.this,
+                            new String[]{Manifest.permission.CALL_PHONE}, 1);
+                }
+
+                dialog.dismiss();
+            });
+
+            dialog.show();
+        });
+
+
+
+
     }
 }
-
-
-
 

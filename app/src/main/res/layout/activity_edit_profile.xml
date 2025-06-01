@@ -6,7 +6,38 @@
     android:background="@color/screenBackColor"
     android:padding="16dp">
 
-    <!-- ScrollView 시작 -->
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/buttonshape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:text="@string/delete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/buttonshape"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:text="@string/edit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
@@ -44,7 +75,7 @@
                 android:padding="7dp"
                 android:maxLines="1"
                 android:imeOptions="actionNext"
-                android:inputType="textPersonName"/>
+                android:inputType="textPersonName" />
 
             <EditText
                 android:id="@+id/editEmail"
@@ -56,34 +87,15 @@
                 android:inputType="textEmailAddress"
                 android:padding="7dp" />
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/editPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <EditText
-                    android:id="@+id/editPhone"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edittextshape"
-                    android:hint="@string/phone"
-                    android:inputType="phone"
-                    android:padding="7dp" />
-
-                <ImageButton
-                    android:id="@+id/btnCall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:background="@drawable/baseline_call_24"
-                    android:contentDescription="전화 걸기"
-                    android:padding="10dp" />
-            </LinearLayout>
-
-
+                android:background="@drawable/edittextshape"
+                android:hint="@string/phone"
+                android:inputType="phone"
+                android:padding="7dp" />
 
             <EditText
                 android:id="@+id/editDepartment"
@@ -95,7 +107,7 @@
                 android:padding="7dp"
                 android:maxLines="1"
                 android:imeOptions="actionNext"
-                android:inputType="textCapWords"/>
+                android:inputType="textCapWords" />
 
             <EditText
                 android:id="@+id/editPosition"
@@ -106,43 +118,10 @@
                 android:hint="@string/position"
                 android:padding="7dp"
                 android:maxLines="1"
-                android:imeOptions="actionDone"
-                android:inputType="textCapWords"/>
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords" />
 
         </LinearLayout>
     </ScrollView>
-    <!-- ScrollView 끝 -->
-
-    <Button
-        android:id="@+id/btnDelete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@drawable/buttonshape"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:paddingStart="12dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="6dp"
-        android:text="@string/delete"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnEdit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@drawable/buttonshape"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:paddingStart="12dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="6dp"
-        android:text="@string/edit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
