@@ -19,6 +19,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnFriendClickListener {
         void onFriendClick(Friend friend);
+
+        void onFavoriteClick(Friend friend);
+
+        void onFavoriteClick(Friend friend, boolean isNowFavorite);
     }
 
     public FriendsAdapter(List<FriendListItem> itemList, OnFriendClickListener listener) {
@@ -37,7 +41,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.section_header, parent, false);
             return new HeaderViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contacts, parent, false);
             return new FriendViewHolder(view);
         }
     }
