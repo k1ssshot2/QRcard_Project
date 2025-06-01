@@ -45,6 +45,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
@@ -63,6 +64,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 friendHolder.favoriteIcon.setImageResource(R.drawable.ic_star_border); // 즐겨찾기 아님
             }
 
+            // ✅ 알림 dot 표시 여부 설정
+            if (friend.shouldShowAlert()) {
+                friendHolder.alertDot.setVisibility(View.VISIBLE);
+            } else {
+                friendHolder.alertDot.setVisibility(View.GONE);
+            }
+
             // 클릭 이벤트 처리
             holder.itemView.setOnClickListener(v -> listener.onFriendClick(friend));
 
@@ -73,6 +81,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             });
         }
     }
+
 
 
     @Override
@@ -93,33 +102,21 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     static class FriendViewHolder extends RecyclerView.ViewHolder {
         TextView nameText;
         ImageView favoriteIcon;
+        View alertDot;
 
         public FriendViewHolder(View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.tvName);
             favoriteIcon = itemView.findViewById(R.id.btnFavorite);
+            alertDot = itemView.findViewById(R.id.ivAlertDot);
         }
     }
     public void setData(List<FriendListItem> newList) {
         itemList.clear();
-
-        // 즐겨찾기 우선 정렬 (헤더 제외)
-        List<Friend> friends = new ArrayList<>();
-        List<SectionHeader> headers = new ArrayList<>();
-
-        for (FriendListItem item : newList) {
-            if (item instanceof Friend) friends.add((Friend) item);
-            else if (item instanceof SectionHeader) headers.add((SectionHeader) item);
-        }
-
-        // 즐겨찾기 먼저 정렬
-        friends.sort((f1, f2) -> Boolean.compare(f2.isFavorite(), f1.isFavorite()));
-
-        itemList.addAll(headers); // (필요하면 섹션 헤더 처리 추가)
-        itemList.addAll(friends);
-
+        itemList.addAll(newList);  // 섹션 헤더 포함된 리스트 그대로 사용
         notifyDataSetChanged();
     }
+
 
 
 }

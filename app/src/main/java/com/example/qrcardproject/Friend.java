@@ -11,17 +11,20 @@ public class Friend implements Serializable, FriendListItem{
     private String position;
     private boolean isFavorite;
 
+    private boolean showAlert;
+
     // Firestore에서 객체를 자동으로 매핑하려면 기본 생성자 필요
     public Friend() {}
 
     // 생성자 (id는 Firestore에서 나중에 설정)
-    public Friend(String name, String email, String Phone,String department, String position, boolean isfavorite) {
+    public Friend(String name, String email, String Phone,String department, String position, boolean isfavorite, boolean showAlert) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.department = department;
         this.position = position;
         this.isFavorite = isfavorite;
+        this.showAlert = showAlert;
     }
 
     public String getId() {
@@ -45,6 +48,8 @@ public class Friend implements Serializable, FriendListItem{
     public String getPosition() {
         return position;
     }
+
+    public boolean shouldShowAlert() {return showAlert;}
 
     public void setId(String id) {
         this.id = id;
@@ -73,7 +78,7 @@ public class Friend implements Serializable, FriendListItem{
     public boolean isFavorite() { return isFavorite; }
     public void setFavorite(boolean favorite) { isFavorite = favorite; }
 
-
+    public void setShowAlert(boolean showAlert) {this.showAlert = showAlert;}
 
 
 }

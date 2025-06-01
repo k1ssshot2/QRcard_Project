@@ -23,48 +23,46 @@ public class NaviActivity extends AppCompatActivity {
         binding = ActivityNaviBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // 초기 화면 설정
+        // 초기 화면 설정 (홈 화면)
         setFragment(TAG_HOME, new HomeFragment());
         binding.navigationView.setSelectedItemId(R.id.homeFragmentGo);
 
-        // 네비게이션 선택 리스너
+        // 하단 네비게이션 아이템 선택 리스너
         binding.navigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
             if (itemId == R.id.contactsFragmentGo) {
+                // 친구 탭 누르면 항상 새 친구 목록 화면 생성
                 setFragment(TAG_CONTACTS, new ContactsFragment());
+                return true;
             } else if (itemId == R.id.homeFragmentGo) {
                 setFragment(TAG_HOME, new HomeFragment());
+                return true;
             } else if (itemId == R.id.myinfoFragmentGo) {
                 setFragment(TAG_MYINFO, new MyInfoFragment());
+                return true;
             }
 
-            return true;
+            return false;
         });
-
     }
 
+    /**
+     * 프래그먼트를 지정된 컨테이너에 교체하는 메서드
+     * 기존에 붙어있는 모든 프래그먼트를 제거하고 새 프래그먼트로 교체
+     */
     protected void setFragment(String tag, Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if (fragmentManager.findFragmentByTag(tag) == null) {
-            fragmentTransaction.add(R.id.mainFrameLayout, fragment, tag);
+        // 기존 프래그먼트 모두 제거
+        for (Fragment f : fragmentManager.getFragments()) {
+            transaction.remove(f);
         }
 
-        Fragment contacts = fragmentManager.findFragmentByTag(TAG_CONTACTS);
-        Fragment home = fragmentManager.findFragmentByTag(TAG_HOME);
-        Fragment myinfo = fragmentManager.findFragmentByTag(TAG_MYINFO);
-
-        if (contacts != null) fragmentTransaction.hide(contacts);
-        if (home != null) fragmentTransaction.hide(home);
-        if (myinfo != null) fragmentTransaction.hide(myinfo);
-
-        Fragment showFragment = fragmentManager.findFragmentByTag(tag);
-        if (showFragment != null) {
-            fragmentTransaction.show(showFragment);
-        }
-
-        fragmentTransaction.commitAllowingStateLoss();
+        // 새 프래그먼트로 교체
+        transaction.replace(R.id.mainFrameLayout, fragment, tag);
+        transaction.commitAllowingStateLoss();
     }
 }
+

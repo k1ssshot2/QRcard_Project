@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -72,7 +73,7 @@ public class ContactsFragment extends Fragment {
         contactAdapter = new FriendsAdapter(new ArrayList<>(), new FriendsAdapter.OnFriendClickListener() {
             @Override
             public void onFriendClick(Friend friend) {
-                onFriendClick(friend);
+                ContactsFragment.this.onFriendClick(friend);
             }
 
             @Override
@@ -98,6 +99,7 @@ public class ContactsFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         loadFriendsFromFirestore();
+        listenForFriendUpdates();
 
         return view;
     }
@@ -154,6 +156,13 @@ public class ContactsFragment extends Fragment {
     private void filterFriends(String query) {
         String lowerCaseQuery = query.toLowerCase();
 
+        // 검색어가 비어있으면 전체 리스트를 표시
+        if (lowerCaseQuery.isEmpty()) {
+            favoriteAdapter.setData(groupFriendsWithHeaders(favoriteList));
+            contactAdapter.setData(groupFriendsWithHeaders(contactList));
+            return;
+        }
+
         List<Friend> filteredFavorite = new ArrayList<>();
         List<Friend> filteredContact = new ArrayList<>();
 
@@ -173,27 +182,35 @@ public class ContactsFragment extends Fragment {
         contactAdapter.setData(groupFriendsWithHeaders(filteredContact));
     }
 
+
     private List<FriendListItem> groupFriendsWithHeaders(List<Friend> friends) {
         List<FriendListItem> groupedList = new ArrayList<>();
+
+        // 친구들을 이름 기준으로 오름차순 정렬
         Collections.sort(friends, Comparator.comparing(
                 f -> f.getName() != null ? f.getName().toLowerCase() : "", String.CASE_INSENSITIVE_ORDER));
 
-        String lastHeader = "";
+        String lastHeader = "";  // 이전 헤더를 추적
+
+        // 친구들을 알파벳 순서대로 그룹화
         for (Friend friend : friends) {
             String name = friend.getName();
             String header;
 
+            // 이름의 첫 글자를 대문자로 추출
             if (name != null && !name.isEmpty()) {
-                header = name.substring(0, 1).toUpperCase();
+                header = name.substring(0, 1).toUpperCase();  // 첫 글자를 대문자로
             } else {
-                header = "?";
+                header = "?";  // 이름이 없을 경우 '?'를 헤더로 처리
             }
 
+            // 새로운 헤더가 나오면 추가
             if (!header.equals(lastHeader)) {
-                groupedList.add(new SectionHeader(header));
-                lastHeader = header;
+                groupedList.add(new SectionHeader(header));  // 새로운 헤더 추가
+                lastHeader = header;  // 마지막 헤더 갱신
             }
 
+            // 친구 추가 (헤더 뒤에 해당 친구 추가)
             groupedList.add(friend);
         }
 
@@ -257,4 +274,51 @@ public class ContactsFragment extends Fragment {
 
         applyFilterToAdapters();
     }
+    private void listenForFriendUpdates() {
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        db.collection("users")
+                .document(currentUserId)
+                .collection("friends")
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.w("ContactsFragment", "Listen failed.", error);
+                        return;
+                    }
+
+                    if (querySnapshot != null) {
+                        for (DocumentChange dc : querySnapshot.getDocumentChanges()) {
+                            if (dc.getType() == DocumentChange.Type.MODIFIED) {
+                                Friend updatedFriend = dc.getDocument().toObject(Friend.class);
+                                updatedFriend.setId(dc.getDocument().getId()); // ID 설정
+                                showAlertDot(updatedFriend.getId());  // dot 표시 함수 호출
+                            }
+                        }
+                    }
+                });
+    }
+    private void showAlertDot(String friendId) {
+        boolean updated = false;
+
+        for (Friend friend : contactList) {
+            if (friend.getId().equals(friendId)) {
+                friend.setShowAlert(true);  // 🔔 알림 dot 표시
+                updated = true;
+                break;
+            }
+        }
+
+        if (!updated) {
+            for (Friend friend : favoriteList) {
+                if (friend.getId().equals(friendId)) {
+                    friend.setShowAlert(true);
+                    break;
+                }
+            }
+        }
+
+        applyFilterToAdapters();  // RecyclerView 새로고침
+    }
+
+
 }
