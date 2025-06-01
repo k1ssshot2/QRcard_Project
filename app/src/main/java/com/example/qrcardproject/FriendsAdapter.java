@@ -3,10 +3,12 @@ package com.example.qrcardproject;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -19,6 +21,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnFriendClickListener {
         void onFriendClick(Friend friend);
+        void onFavoriteToggled(Friend friend);
     }
 
     public FriendsAdapter(List<FriendListItem> itemList, OnFriendClickListener listener) {
@@ -37,7 +40,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.section_header, parent, false);
             return new HeaderViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_friend_profile, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contacts, parent, false);
             return new FriendViewHolder(view);
         }
     }
@@ -49,21 +52,35 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((HeaderViewHolder) holder).headerText.setText(header.getHeader());
         } else {
             Friend friend = (Friend) itemList.get(position);
-            ((FriendViewHolder) holder).nameText.setText(friend.getName());
+            FriendViewHolder friendHolder = (FriendViewHolder) holder;
+
+            friendHolder.nameText.setText(friend.getName());
+
+            // 즐겨찾기 아이콘 상태 설정
+            if (friend.isFavorite()) {
+                friendHolder.favoriteIcon.setImageResource(R.drawable.ic_star_filled); // 즐겨찾기된 상태
+            } else {
+                friendHolder.favoriteIcon.setImageResource(R.drawable.ic_star_border); // 즐겨찾기 아님
+            }
+
+            // 클릭 이벤트 처리
             holder.itemView.setOnClickListener(v -> listener.onFriendClick(friend));
+
+            friendHolder.favoriteIcon.setOnClickListener(v -> {
+                friend.setFavorite(!friend.isFavorite());
+                notifyItemChanged(position);
+                listener.onFavoriteToggled(friend);
+            });
         }
     }
+
 
     @Override
     public int getItemCount() {
         return itemList.size();
     }
 
-    public void setData(List<FriendListItem> newList) {
-        itemList.clear();
-        itemList.addAll(newList);
-        notifyDataSetChanged();
-    }
+
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         TextView headerText;
@@ -75,9 +92,34 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     static class FriendViewHolder extends RecyclerView.ViewHolder {
         TextView nameText;
+        ImageView favoriteIcon;
+
         public FriendViewHolder(View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.editName);
+            nameText = itemView.findViewById(R.id.tvName);
+            favoriteIcon = itemView.findViewById(R.id.btnFavorite);
         }
     }
+    public void setData(List<FriendListItem> newList) {
+        itemList.clear();
+
+        // 즐겨찾기 우선 정렬 (헤더 제외)
+        List<Friend> friends = new ArrayList<>();
+        List<SectionHeader> headers = new ArrayList<>();
+
+        for (FriendListItem item : newList) {
+            if (item instanceof Friend) friends.add((Friend) item);
+            else if (item instanceof SectionHeader) headers.add((SectionHeader) item);
+        }
+
+        // 즐겨찾기 먼저 정렬
+        friends.sort((f1, f2) -> Boolean.compare(f2.isFavorite(), f1.isFavorite()));
+
+        itemList.addAll(headers); // (필요하면 섹션 헤더 처리 추가)
+        itemList.addAll(friends);
+
+        notifyDataSetChanged();
+    }
+
+
 }

@@ -3,12 +3,12 @@ package com.example.qrcardproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextWatcher; // 🔸추가
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText; // 🔸추가
+import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -35,7 +35,7 @@ public class ContactsFragment extends Fragment {
     private FirebaseFirestore db;
     private static final int REQUEST_VIEW_FRIEND = 1001;
 
-    private EditText searchBar; // 🔸추가
+    private EditText searchBar;
 
     public ContactsFragment() {}
 
@@ -53,17 +53,37 @@ public class ContactsFragment extends Fragment {
         favoriteRecyclerView = view.findViewById(R.id.favoriteRecyclerView);
         favoriteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         favoriteList = new ArrayList<>();
-        favoriteAdapter = new FriendsAdapter(new ArrayList<>(), this::onFriendClick);
+        favoriteAdapter = new FriendsAdapter(new ArrayList<>(), new FriendsAdapter.OnFriendClickListener() {
+            @Override
+            public void onFriendClick(Friend friend) {
+                onFriendClick(friend);
+            }
+
+            @Override
+            public void onFavoriteToggled(Friend friend) {
+                toggleFavorite(friend);
+            }
+        });
         favoriteRecyclerView.setAdapter(favoriteAdapter);
 
         contactRecyclerView = view.findViewById(R.id.contactRecyclerView);
         contactRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         contactList = new ArrayList<>();
-        contactAdapter = new FriendsAdapter(new ArrayList<>(), this::onFriendClick);
+        contactAdapter = new FriendsAdapter(new ArrayList<>(), new FriendsAdapter.OnFriendClickListener() {
+            @Override
+            public void onFriendClick(Friend friend) {
+                onFriendClick(friend);
+            }
+
+            @Override
+            public void onFavoriteToggled(Friend friend) {
+                toggleFavorite(friend);
+            }
+        });
         contactRecyclerView.setAdapter(contactAdapter);
 
-        searchBar = view.findViewById(R.id.searchBar); // 🔸검색창 연결
-        searchBar.addTextChangedListener(new TextWatcher() { // 🔸검색 기능 추가
+        searchBar = view.findViewById(R.id.searchBar);
+        searchBar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
@@ -84,20 +104,16 @@ public class ContactsFragment extends Fragment {
 
     private void onFriendClick(Friend friend) {
         FriendProfileFragment profileFragment = new FriendProfileFragment();
-
-        // 데이터를 번들로 전달
         Bundle bundle = new Bundle();
-        bundle.putSerializable("friend", friend);  // Friend는 Serializable 구현 필요
+        bundle.putSerializable("friend", friend);
         profileFragment.setArguments(bundle);
 
-        // 프래그먼트 전환
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.mainFrameLayout, profileFragment) // 프레임레이아웃 ID 확인
+                .replace(R.id.mainFrameLayout, profileFragment)
                 .addToBackStack(null)
                 .commit();
     }
-
 
     private void loadFriendsFromFirestore() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -112,13 +128,9 @@ public class ContactsFragment extends Fragment {
                         favoriteList.clear();
                         contactList.clear();
 
-                        Log.d("ContactsFragment", "Firestore 친구 문서 개수: " + task.getResult().size());
-
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Friend friend = doc.toObject(Friend.class);
                             friend.setId(doc.getId());
-
-                            Log.d("ContactsFragment", "가져온 친구: " + friend.getName() + " / 즐겨찾기: " + friend.isFavorite());
 
                             if (friend.isFavorite()) {
                                 favoriteList.add(friend);
@@ -127,7 +139,7 @@ public class ContactsFragment extends Fragment {
                             }
                         }
 
-                        applyFilterToAdapters(); // 🔸검색 필터와 함께 적용
+                        applyFilterToAdapters();
                     } else {
                         Log.w("ContactsFragment", "Firestore 불러오기 실패", task.getException());
                     }
@@ -174,7 +186,7 @@ public class ContactsFragment extends Fragment {
             if (name != null && !name.isEmpty()) {
                 header = name.substring(0, 1).toUpperCase();
             } else {
-                header = "?";  // 이름이 비어 있거나 null이면 '?' 섹션으로
+                header = "?";
             }
 
             if (!header.equals(lastHeader)) {
@@ -186,6 +198,30 @@ public class ContactsFragment extends Fragment {
         }
 
         return groupedList;
+    }
+
+    private void toggleFavorite(Friend friend) {
+        boolean isNowFavorite = friend.isFavorite();
+
+        if (isNowFavorite) {
+            contactList.remove(friend);
+            favoriteList.add(friend);
+        } else {
+            favoriteList.remove(friend);
+            contactList.add(friend);
+        }
+
+        // Firestore 반영
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        db.collection("users")
+                .document(currentUserId)
+                .collection("friends")
+                .document(friend.getId())
+                .update("favorite", isNowFavorite)
+                .addOnSuccessListener(aVoid -> Log.d("ContactsFragment", "즐겨찾기 업데이트 완료"))
+                .addOnFailureListener(e -> Log.w("ContactsFragment", "즐겨찾기 업데이트 실패", e));
+
+        applyFilterToAdapters();
     }
 
     @Override
@@ -219,6 +255,6 @@ public class ContactsFragment extends Fragment {
             }
         }
 
-        applyFilterToAdapters(); // 🔸삭제 후 필터 다시 적용
+        applyFilterToAdapters();
     }
 }
