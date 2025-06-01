@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;  // 추가된 import
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,30 +19,32 @@ import androidx.fragment.app.Fragment;
 
 public class FriendProfileFragment extends Fragment {
 
-    private TextView nameTextView, emailTextView, phoneTextView, departmentTextView, positionTextView;
+    private EditText editName, editEmail, editDepartment, editPosition, editPhone;
     private Button editButton, deleteButton;
     private Friend friend;
+
+    private ImageButton btnCall;
 
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friend_profile, container, false);
 
-        nameTextView = rootView.findViewById(R.id.editName);
-        emailTextView = rootView.findViewById(R.id.editEmail);
-        phoneTextView = rootView.findViewById(R.id.editPhone);
-        departmentTextView = rootView.findViewById(R.id.editDepartment);
-        positionTextView = rootView.findViewById(R.id.editPosition);
+        editName = rootView.findViewById(R.id.editName);
+        editEmail = rootView.findViewById(R.id.editEmail);
+        editPhone = rootView.findViewById(R.id.editPhone);
+        editDepartment = rootView.findViewById(R.id.editDepartment);
+        editPosition = rootView.findViewById(R.id.editPosition);
         editButton = rootView.findViewById(R.id.btnEdit);
         deleteButton = rootView.findViewById(R.id.btnDelete);
 
         if (getArguments() != null) {
             friend = (Friend) getArguments().getSerializable("friend");
             if (friend != null) {
-                nameTextView.setText(friend.getName());
-                emailTextView.setText(friend.getEmail());
-                phoneTextView.setText(friend.getPhone());
-                departmentTextView.setText(friend.getDepartment());
-                positionTextView.setText(friend.getPosition());
+                editName.setText(friend.getName());
+                editEmail.setText(friend.getEmail());
+                editPhone.setText(friend.getPhone());
+                editDepartment.setText(friend.getDepartment());
+                editPosition.setText(friend.getPosition());
             }
         }
 
@@ -65,9 +69,21 @@ public class FriendProfileFragment extends Fragment {
                     .show();
         });
 
+        btnCall = rootView.findViewById(R.id.btnCall);
+
+        btnCall.setOnClickListener(v -> {
+            if (friend != null && friend.getPhone() != null && !friend.getPhone().isEmpty()) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);  // ACTION_CALL은 위험 권한이므로 권장되지 않음
+                intent.setData(android.net.Uri.parse("tel:" + friend.getPhone()));
+                startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "전화번호가 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         return rootView;
     }
-
 
     public static FriendProfileFragment newInstance(Friend friend) {
         FriendProfileFragment fragment = new FriendProfileFragment();

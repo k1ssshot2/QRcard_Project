@@ -2,10 +2,13 @@ package com.example.qrcardproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher; // 🔸추가
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText; // 🔸추가
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -21,7 +24,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
 public class ContactsFragment extends Fragment {
 
     private RecyclerView favoriteRecyclerView;
@@ -32,6 +34,8 @@ public class ContactsFragment extends Fragment {
     private List<Friend> contactList;
     private FirebaseFirestore db;
     private static final int REQUEST_VIEW_FRIEND = 1001;
+
+    private EditText searchBar; // 🔸추가
 
     public ContactsFragment() {}
 
@@ -58,6 +62,20 @@ public class ContactsFragment extends Fragment {
         contactAdapter = new FriendsAdapter(new ArrayList<>(), this::onFriendClick);
         contactRecyclerView.setAdapter(contactAdapter);
 
+        searchBar = view.findViewById(R.id.searchBar); // 🔸검색창 연결
+        searchBar.addTextChangedListener(new TextWatcher() { // 🔸검색 기능 추가
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterFriends(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
         db = FirebaseFirestore.getInstance();
         loadFriendsFromFirestore();
 
@@ -65,10 +83,22 @@ public class ContactsFragment extends Fragment {
     }
 
     private void onFriendClick(Friend friend) {
-        Intent intent = new Intent(getContext(), FriendProfileFragment.class);
-        intent.putExtra("friend", friend);
-        startActivityForResult(intent, REQUEST_VIEW_FRIEND);
+        FriendProfileFragment profileFragment = new FriendProfileFragment();
+
+        // 데이터를 번들로 전달
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("friend", friend);  // Friend는 Serializable 구현 필요
+        profileFragment.setArguments(bundle);
+
+        // 프래그먼트 전환
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.mainFrameLayout, profileFragment) // 프레임레이아웃 ID 확인
+                .addToBackStack(null)
+                .commit();
     }
+
+
     private void loadFriendsFromFirestore() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Log.d("ContactsFragment", "현재 사용자 UID: " + currentUserId);
@@ -97,18 +127,39 @@ public class ContactsFragment extends Fragment {
                             }
                         }
 
-                        Log.d("ContactsFragment", "즐겨찾기 수: " + favoriteList.size());
-                        Log.d("ContactsFragment", "일반 연락처 수: " + contactList.size());
-
-                        favoriteAdapter.setData(groupFriendsWithHeaders(favoriteList));
-                        contactAdapter.setData(groupFriendsWithHeaders(contactList));
+                        applyFilterToAdapters(); // 🔸검색 필터와 함께 적용
                     } else {
                         Log.w("ContactsFragment", "Firestore 불러오기 실패", task.getException());
                     }
                 });
     }
 
+    private void applyFilterToAdapters() {
+        String query = searchBar.getText().toString();
+        filterFriends(query);
+    }
 
+    private void filterFriends(String query) {
+        String lowerCaseQuery = query.toLowerCase();
+
+        List<Friend> filteredFavorite = new ArrayList<>();
+        List<Friend> filteredContact = new ArrayList<>();
+
+        for (Friend friend : favoriteList) {
+            if (friend.getName() != null && friend.getName().toLowerCase().contains(lowerCaseQuery)) {
+                filteredFavorite.add(friend);
+            }
+        }
+
+        for (Friend friend : contactList) {
+            if (friend.getName() != null && friend.getName().toLowerCase().contains(lowerCaseQuery)) {
+                filteredContact.add(friend);
+            }
+        }
+
+        favoriteAdapter.setData(groupFriendsWithHeaders(filteredFavorite));
+        contactAdapter.setData(groupFriendsWithHeaders(filteredContact));
+    }
 
     private List<FriendListItem> groupFriendsWithHeaders(List<Friend> friends) {
         List<FriendListItem> groupedList = new ArrayList<>();
@@ -136,7 +187,6 @@ public class ContactsFragment extends Fragment {
 
         return groupedList;
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -169,12 +219,6 @@ public class ContactsFragment extends Fragment {
             }
         }
 
-        List<FriendListItem> groupedFavoriteList = groupFriendsWithHeaders(favoriteList);
-        List<FriendListItem> groupedContactList = groupFriendsWithHeaders(contactList);
-
-        favoriteAdapter.setData(groupedFavoriteList);
-        contactAdapter.setData(groupedContactList);
+        applyFilterToAdapters(); // 🔸삭제 후 필터 다시 적용
     }
 }
-
-
