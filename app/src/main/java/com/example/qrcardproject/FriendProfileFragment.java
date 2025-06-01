@@ -17,6 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class FriendProfileFragment extends Fragment {
 
     private static final int REQUEST_EDIT_FRIEND = 2001;
@@ -55,11 +58,20 @@ public class FriendProfileFragment extends Fragment {
                     .setTitle("삭제 확인")
                     .setMessage("이 친구를 삭제하시겠습니까?")
                     .setPositiveButton("삭제", (dialog, which) -> {
-                        Intent resultIntent = new Intent();
-                        resultIntent.putExtra("friendEmail", friend.getEmail());
-                        getActivity().setResult(RESULT_OK, resultIntent);
-                        Toast.makeText(getActivity(), "친구가 삭제되었습니다", Toast.LENGTH_SHORT).show();
-                        getActivity().finish();
+                        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        FirebaseFirestore.getInstance()
+                                .collection("users")
+                                .document(currentUserId)
+                                .collection("friends")
+                                .document(friend.getId()) // friend의 문서 id
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(getContext(), "친구가 삭제되었습니다", Toast.LENGTH_SHORT).show();
+                                    getActivity().finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "삭제 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
                     })
                     .setNegativeButton("취소", null)
                     .show();

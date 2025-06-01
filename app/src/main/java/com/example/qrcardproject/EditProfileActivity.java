@@ -1,5 +1,7 @@
 package com.example.qrcardproject;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -44,25 +46,27 @@ public class EditProfileActivity extends AppCompatActivity {
 
         // 수정 완료 버튼 클릭 시
         btnEdit.setOnClickListener(v -> {
-            // 예시: 수정된 Friend 객체 생성
+            // 1) 수정된 Friend 객체 생성
             Friend updatedFriend = new Friend();
+            updatedFriend.setId(friend.getId());  // **ID 꼭 넣어야 Firestore 문서 덮어쓰기 가능**
             updatedFriend.setName(etName.getText().toString());
             updatedFriend.setEmail(etEmail.getText().toString());
             updatedFriend.setPhone(etPhone.getText().toString());
             updatedFriend.setDepartment(etDepartment.getText().toString());
             updatedFriend.setPosition(etPosition.getText().toString());
 
-            // Firestore에 업데이트
+            // 2) Firestore 업데이트
             String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            FirebaseFirestore.getInstance()
-                    .collection("users")
+            db.collection("users")
                     .document(currentUserId)
                     .collection("friends")
-                    .document(updatedFriend.getId())
+                    .document(updatedFriend.getId())  // 수정 대상 문서 ID
                     .set(updatedFriend)
                     .addOnSuccessListener(aVoid -> {
+                        // 수정 성공시
                         Intent resultIntent = new Intent();
                         resultIntent.putExtra("updatedFriend", updatedFriend);
+                        Toast.makeText(EditProfileActivity.this, "프로필 정보가 업데이트되었습니다.", Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK, resultIntent);
                         finish();
                     })
