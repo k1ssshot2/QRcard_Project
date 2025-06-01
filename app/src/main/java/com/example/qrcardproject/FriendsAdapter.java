@@ -37,7 +37,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.section_header, parent, false);
             return new HeaderViewHolder(view);
         } else {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_friend_profile, parent, false);
             return new FriendViewHolder(view);
         }
     }
@@ -77,7 +77,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView nameText;
         public FriendViewHolder(View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.friendName);
+            nameText = itemView.findViewById(R.id.editName);
         }
     }
 }
