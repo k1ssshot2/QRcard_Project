@@ -111,27 +111,29 @@ public class ContactsFragment extends Fragment {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        favoriteList.clear();
                         contactList.clear();
+                        favoriteList.clear();  // 즐겨찾기 리스트 초기화
 
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Friend friend = doc.toObject(Friend.class);
                             friend.setId(doc.getId());
 
+                            contactList.add(friend);  // 전체 목록에 추가
                             if (friend.isFavorite()) {
                                 favoriteList.add(friend);
-                            } else {
-                                contactList.add(friend);
+                                contactList.add(friend);// 즐겨찾기라면 별도로 추가
                             }
                         }
 
-                        favoriteAdapter.setData(groupFriendsWithHeaders(favoriteList));
+                        // UI에 적용
                         contactAdapter.setData(groupFriendsWithHeaders(contactList));
+                        favoriteAdapter.setData(groupFriendsWithHeaders(favoriteList));
                     } else {
                         Log.w("ContactsFragment", "Firestore 불러오기 실패", task.getException());
                     }
                 });
     }
+
 
     private void updateFavoriteInFirestore(Friend friend, boolean isNowFavorite) {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -146,7 +148,7 @@ public class ContactsFragment extends Fragment {
                     if (task.isSuccessful()) {
                         // Firestore 업데이트가 성공했을 때
                         Log.d("ContactsFragment", "즐겨찾기 상태가 성공적으로 업데이트되었습니다.");
-                        // UI 갱신을 위한 코드 추가 (옵션)
+                        loadFriendsFromFirestore();  // UI 다시 로드
                     } else {
                         // Firestore 업데이트 실패 시
                         Log.w("ContactsFragment", "즐겨찾기 상태 업데이트 실패", task.getException());
