@@ -18,6 +18,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.fragment.app.Fragment;
+import androidx.activity.OnBackPressedCallback;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentReference;
@@ -138,6 +139,16 @@ public class HomeFragment extends Fragment {
                         .commit();
             }
         });
+
+        // Back 버튼 무시 설정
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),
+                new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        // 아무 작업도 하지 않음 → 뒤로 가기 무시됨
+                    }
+                }
+        );
 
         return view;
     }
