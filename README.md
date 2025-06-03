@@ -16,24 +16,26 @@
 - ✅ 친구 프로필 상세 조회
 
 ### 프로젝트 구조
-📦 com.example.qrcardproject
-├── NaviActivity.java // 메인 네비게이션 액티비티
-├── StartScreenActivity.java // 시작 화면
-├── LoginScreenActivity.java // 로그인 화면
-├── RegisterActivity.java // 회원가입 화면
-├── fragments/
-│ ├── HomeFragment.java
-│ │ └── AddScanFragment.java // QR 스캔 및 친구 추가
-│ ├── ContactsFragment.java
-│ │ └── FriendProfileFragment.java
-│ ├── MyInfoFragment.java // 내 정보 수정
-├── models/
-│ └── Friend.java // 친구 정보 모델 클래스
-├── adapters/
-│ └── FriendAdapter.java // 친구 목록 RecyclerView 어댑터
-├── res/
-│ ├── layout/ // XML UI 레이아웃
-│ └── drawable/ // 아이콘 및 이미지 리소스
+📦com.example.qrcardproject
+├── NaviActivity.java (main)
+├── StartScreenActivity.java
+├── LoginScreenActivity.java
+├── RegisterActivity.java (Signup)
+├── FriendProfileFragment.java
+├── fragments
+│   ├── HomeFragment.java
+│   │   └──AddScanFragment.java
+│   ├── ContactsFragment.java
+│   │   └── FriendProfileFragment.java
+│   ├── MyInfoFragment.java
+│   
+├── models
+│   └── Friend.java
+├── adapters
+│   └── FriendAdapter.java
+├── res
+│   ├── layout/
+│   └── drawable/
 └── AndroidManifest.xml
 
 
