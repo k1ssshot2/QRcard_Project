@@ -22,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -29,7 +31,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import com.example.qrcardproject.R;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class MyInfoFragment extends Fragment {
 
@@ -127,7 +131,7 @@ public class MyInfoFragment extends Fragment {
             return false;
         });
 
-// confirmNewPassword에서 엔터 누르면 키보드 내리기
+        // confirmNewPassword에서 엔터 누르면 키보드 내리기
         confirmNewPassword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
@@ -164,6 +168,7 @@ public class MyInfoFragment extends Fragment {
             Toast.makeText(getContext(), "로그인된 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
+
     private void saveUserProfile() {
         if (currentUser == null) {
             Toast.makeText(getContext(), "로그인된 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
@@ -191,13 +196,14 @@ public class MyInfoFragment extends Fragment {
 
             // 🔽 변경된 내 정보로 친구 DB도 업데이트
             Friend updatedFriend = new Friend();
-            updatedFriend.setId(currentUser.getUid());
+            updatedFriend.setId(currentUser.getUid()); // 나의 UID
             updatedFriend.setName(name);
             updatedFriend.setEmail(email);
             updatedFriend.setPhone(phone);
             updatedFriend.setDepartment(department);
             updatedFriend.setPosition(position);
 
+            // 다른 사용자의 friends 컬렉션에 있는 나의 정보를 업데이트합니다.
             updateMyInfoInFriends(currentUser.getUid(), updatedFriend);
 
         }).addOnFailureListener(e -> {
@@ -229,22 +235,28 @@ public class MyInfoFragment extends Fragment {
     }
 
     private void updateMyInfoInFriends(String myUid, Friend updatedFriendData) {
+        // 1. Firestore의 모든 사용자(users 컬렉션의 모든 문서)를 가져온다.
         db.collection("users")
                 .get()
                 .addOnSuccessListener(usersSnapshot -> {
+                    // 2. 각 사용자의 문서에 대해 반복한다.
                     for (DocumentSnapshot userDoc : usersSnapshot) {
                         String userId = userDoc.getId();
 
-                        // 내 자신의 friends 컬렉션은 제외
+                        // 3. 내 자신의 friends 컬렉션은 업데이트 대상에서 제외한다.
                         if (userId.equals(myUid)) continue;
 
+                        // 4. 해당 사용자의 friends 컬렉션에서 '나의 UID'에 해당하는 문서를 참조한다.
+                        // (즉, users/{다른 사용자 UID}/friends/{나의 UID} 경로의 문서를 찾는다)
                         DocumentReference friendRef = db.collection("users")
                                 .document(userId)
                                 .collection("friends")
-                                .document(myUid);
+                                .document(myUid); // 여기서 myUid를 사용하여 나의 정보를 찾는다
 
+                        // 5. 해당 친구 문서가 존재하는지 확인한다 (나를 친구로 추가한 경우에만 존재한다).
                         friendRef.get().addOnSuccessListener(friendSnapshot -> {
                             if (friendSnapshot.exists()) {
+                                // 6. 존재하면, 나의 변경된 정보로 해당 친구 문서의 필드를 업데이트한다.
                                 friendRef.update(
                                         "name", updatedFriendData.getName(),
                                         "email", updatedFriendData.getEmail(),
