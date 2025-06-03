@@ -1,16 +1,14 @@
 package com.example.qrcardproject;
 
-import static android.app.Activity.RESULT_OK;
-
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;  // 추가된 import
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -22,17 +20,19 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FriendProfileFragment extends Fragment {
 
-    private static final int REQUEST_EDIT_FRIEND = 2001;
-
-    private EditText editName, editEmail, editDepartment, editPosition, editPhone;
+    private EditText editName, editEmail, editPhone, editDepartment, editPosition;
     private Button editButton, deleteButton;
-    private Friend friend;
     private ImageButton btnCall;
 
+    private Friend friend;
+    private FirebaseFirestore db;
+
+    @Nullable
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_friend_profile, container, false);
 
+        // View 초기화
         editName = rootView.findViewById(R.id.editName);
         editEmail = rootView.findViewById(R.id.editEmail);
         editPhone = rootView.findViewById(R.id.editPhone);
@@ -42,34 +42,61 @@ public class FriendProfileFragment extends Fragment {
         deleteButton = rootView.findViewById(R.id.btnDelete);
         btnCall = rootView.findViewById(R.id.btnCall);
 
+        db = FirebaseFirestore.getInstance();
+
+        // 전달받은 friend 정보 설정
         if (getArguments() != null) {
             friend = (Friend) getArguments().getSerializable("friend");
             setFriendInfo(friend);
         }
 
+        // 수정 버튼 클릭
         editButton.setOnClickListener(v -> {
-            Intent editIntent = new Intent(getActivity(), EditProfileActivity.class);
-            editIntent.putExtra("friend", friend);
-            startActivityForResult(editIntent, REQUEST_EDIT_FRIEND);
+            if (friend == null) return;
+
+            Friend updatedFriend = new Friend();
+            updatedFriend.setId(friend.getId());
+            updatedFriend.setName(editName.getText().toString());
+            updatedFriend.setEmail(editEmail.getText().toString());
+            updatedFriend.setPhone(editPhone.getText().toString());
+            updatedFriend.setDepartment(editDepartment.getText().toString());
+            updatedFriend.setPosition(editPosition.getText().toString());
+
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            db.collection("users")
+                    .document(currentUserId)
+                    .collection("friends")
+                    .document(updatedFriend.getId())
+                    .set(updatedFriend)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(getContext(), "프로필 정보가 업데이트되었습니다.", Toast.LENGTH_SHORT).show();
+                        friend = updatedFriend;  // UI에 반영
+                        setFriendInfo(friend);
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "수정 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         });
 
+        // 삭제 버튼 클릭
         deleteButton.setOnClickListener(v -> {
-            new AlertDialog.Builder(getActivity())
+            if (friend == null) return;
+
+            new AlertDialog.Builder(requireContext())
                     .setTitle("삭제 확인")
                     .setMessage("이 친구를 삭제하시겠습니까?")
                     .setPositiveButton("삭제", (dialog, which) -> {
                         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        FirebaseFirestore.getInstance()
-                                .collection("users")
+
+                        db.collection("users")
                                 .document(currentUserId)
                                 .collection("friends")
-                                .document(friend.getId()) // friend의 문서 id
+                                .document(friend.getId())
                                 .delete()
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(getContext(), "친구가 삭제되었습니다", Toast.LENGTH_SHORT).show();
-                                    Intent resultIntent = new Intent();
-                                    resultIntent.putExtra("friendEmail", friend.getEmail());
-                                    getParentFragmentManager().popBackStack();
+                                    requireActivity().finish();
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(getContext(), "삭제 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -79,10 +106,11 @@ public class FriendProfileFragment extends Fragment {
                     .show();
         });
 
+        // 전화 걸기 버튼
         btnCall.setOnClickListener(v -> {
             if (friend != null && friend.getPhone() != null && !friend.getPhone().isEmpty()) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(android.net.Uri.parse("tel:" + friend.getPhone()));
+                intent.setData(Uri.parse("tel:" + friend.getPhone()));
                 startActivity(intent);
             } else {
                 Toast.makeText(getContext(), "전화번호가 없습니다.", Toast.LENGTH_SHORT).show();
@@ -99,18 +127,6 @@ public class FriendProfileFragment extends Fragment {
             editPhone.setText(friend.getPhone());
             editDepartment.setText(friend.getDepartment());
             editPosition.setText(friend.getPosition());
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_EDIT_FRIEND && resultCode == RESULT_OK && data != null) {
-            Friend updatedFriend = (Friend) data.getSerializableExtra("updatedFriend");
-            if (updatedFriend != null) {
-                this.friend = updatedFriend;
-                setFriendInfo(friend);
-            }
         }
     }
 
