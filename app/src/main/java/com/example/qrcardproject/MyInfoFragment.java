@@ -121,7 +121,6 @@ public class MyInfoFragment extends Fragment {
             isConfirmNewPasswordVisible = !isConfirmNewPasswordVisible;
         });
 
-        // editPosition에서 엔터 누르면 키보드 내리기
         editPosition.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
@@ -131,7 +130,6 @@ public class MyInfoFragment extends Fragment {
             return false;
         });
 
-        // confirmNewPassword에서 엔터 누르면 키보드 내리기
         confirmNewPassword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {

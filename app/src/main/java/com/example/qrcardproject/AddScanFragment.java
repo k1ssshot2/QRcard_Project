@@ -36,7 +36,6 @@ public class AddScanFragment extends Fragment {
     private String scannedUserUid = null;
 
     public AddScanFragment() {
-        // Required empty public constructor
     }
 
     private String getSafeString(Object value) {
@@ -48,34 +47,28 @@ public class AddScanFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_scan, container, false);
 
-        // Firestore 및 FirebaseAuth 초기화
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
 
-        // 필드 변수에 뷰 연결
         editName = view.findViewById(R.id.editName);
         editEmail = view.findViewById(R.id.editEmail);
         editPhone = view.findViewById(R.id.editPhone);
         editDepartment = view.findViewById(R.id.editDepartment);
         editPosition = view.findViewById(R.id.editPosition);
 
-        // 키보드 Enter 시 자판 내리기 설정
         setupKeyboardDismiss(editName);
         setupKeyboardDismiss(editEmail);
         setupKeyboardDismiss(editPhone);
         setupKeyboardDismiss(editDepartment);
         setupKeyboardDismiss(editPosition);
 
-        // Cancel 버튼
         Button cancelButton = view.findViewById(R.id.btnCancel);
         cancelButton.setOnClickListener(v -> requireActivity().getSupportFragmentManager().popBackStack());
 
-        // Save 버튼
         Button saveButton = view.findViewById(R.id.btnSave);
         saveButton.setOnClickListener(v -> saveContact());
 
-        // QR 코드 데이터 처리
         Bundle args = getArguments();
         if (args != null) {
             String scannedData = args.getString("scanned_info");
@@ -163,7 +156,7 @@ public class AddScanFragment extends Fragment {
             return;
         }
 
-        // 내 자신의 UID와 스캔된 친구의 UID가 같은 경우 저장하지 않음 (자신을 친구로 추가 방지)
+        // 내 자신의 UID와 스캔된 친구의 UID가 같은 경우 저장하지 않음
         if (currentUser.getUid().equals(scannedUserUid)) {
             Toast.makeText(getContext(), "자기 자신은 친구로 추가할 수 없습니다.", Toast.LENGTH_SHORT).show();
             requireActivity().getSupportFragmentManager().popBackStack();
@@ -182,7 +175,7 @@ public class AddScanFragment extends Fragment {
         }
 
         Map<String, Object> contact = new HashMap<>();
-        contact.put("uid", scannedUserUid); // UID 추가
+        contact.put("uid", scannedUserUid);
         contact.put("name", name);
         contact.put("email", email);
         contact.put("phone", phone);
@@ -191,8 +184,8 @@ public class AddScanFragment extends Fragment {
 
         // Firestore 문서 ID를 scannedUserUid로 설정하여 저장
         db.collection("users").document(currentUser.getUid()).collection("friends")
-                .document(scannedUserUid) // 문서 ID를 친구의 UID로 설정
-                .set(contact) // .add() 대신 .set() 사용
+                .document(scannedUserUid)
+                .set(contact)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(), "연락처가 저장되었습니다.", Toast.LENGTH_SHORT).show();
                     requireActivity().getSupportFragmentManager().popBackStack();
