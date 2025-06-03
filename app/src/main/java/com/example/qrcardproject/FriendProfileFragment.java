@@ -69,8 +69,7 @@ public class FriendProfileFragment extends Fragment {
                                     Toast.makeText(getContext(), "친구가 삭제되었습니다", Toast.LENGTH_SHORT).show();
                                     Intent resultIntent = new Intent();
                                     resultIntent.putExtra("friendEmail", friend.getEmail());
-                                    getActivity().setResult(RESULT_OK, resultIntent);
-                                    getActivity().finish();
+                                    getParentFragmentManager().popBackStack();
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(getContext(), "삭제 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();

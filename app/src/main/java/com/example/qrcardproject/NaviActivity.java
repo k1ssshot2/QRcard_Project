@@ -45,6 +45,18 @@ public class NaviActivity extends AppCompatActivity {
 
             return false;
         });
+
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.mainFrameLayout);
+
+            if (currentFragment instanceof HomeFragment) {
+                binding.navigationView.setSelectedItemId(R.id.homeFragmentGo);
+            } else if (currentFragment instanceof ContactsFragment) {
+                binding.navigationView.setSelectedItemId(R.id.contactsFragmentGo);
+            } else if (currentFragment instanceof MyInfoFragment) {
+                binding.navigationView.setSelectedItemId(R.id.myinfoFragmentGo);
+            }
+        });
     }
 
     /**
@@ -53,16 +65,23 @@ public class NaviActivity extends AppCompatActivity {
      */
     protected void setFragment(String tag, Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        // 기존 프래그먼트 모두 제거
-        for (Fragment f : fragmentManager.getFragments()) {
-            transaction.remove(f);
+        // 현재 프래그먼트가 이미 보여지고 있는 경우 무시
+        Fragment currentFragment = fragmentManager.findFragmentById(R.id.mainFrameLayout);
+        if (currentFragment != null && currentFragment.getClass().equals(fragment.getClass())) {
+            return;
         }
 
-        // 새 프래그먼트로 교체
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.mainFrameLayout, fragment, tag);
-        transaction.commitAllowingStateLoss();
+
+        // 홈은 백스택에 쌓지 않음, 나머지는 백스택에 추가
+        if (!TAG_HOME.equals(tag)) {
+            transaction.addToBackStack(tag);
+        }
+
+        transaction.commit();
     }
+
 }
 
