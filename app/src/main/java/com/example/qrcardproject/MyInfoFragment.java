@@ -1,5 +1,6 @@
 package com.example.qrcardproject;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -278,7 +279,7 @@ public class MyInfoFragment extends Fragment {
     private void logoutUser() {
         mAuth.signOut();
         Toast.makeText(getContext(), "로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getActivity(), LoginScreenActivity.class);
+        Intent intent = new Intent(getActivity(), StartScreenActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         getActivity().finish();
@@ -338,10 +339,17 @@ public class MyInfoFragment extends Fragment {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(), "계정이 성공적으로 삭제되었습니다.", Toast.LENGTH_SHORT).show();
                     logoutUser();
+                    redirectToStartScreen();
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Firebase Authentication 계정 삭제 실패", e);
                     Toast.makeText(getContext(), "계정 삭제 실패: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
+    }
+
+    private void redirectToStartScreen() {
+        Intent intent = new Intent(getContext(), StartScreenActivity.class); // StartActivity는 시작 화면 액티비티 이름
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // 백스택 초기화
+        startActivity(intent);
     }
 }

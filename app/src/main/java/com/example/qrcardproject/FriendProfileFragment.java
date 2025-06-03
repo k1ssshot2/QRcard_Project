@@ -96,7 +96,7 @@ public class FriendProfileFragment extends Fragment {
                                 .delete()
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(getContext(), "친구가 삭제되었습니다", Toast.LENGTH_SHORT).show();
-                                    requireActivity().finish();
+                                    getActivity().getSupportFragmentManager().popBackStack();
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(getContext(), "삭제 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
