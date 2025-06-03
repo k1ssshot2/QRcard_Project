@@ -323,9 +323,18 @@ public class ContactsFragment extends Fragment {
         return (a == null && b == null) || (a != null && a.equals(b));
     }
 
+    private boolean hasImportantChange(Friend oldF, Friend newF) {
+        return !safeEquals(oldF.getName(), newF.getName()) ||
+                !safeEquals(oldF.getEmail(), newF.getEmail()) ||
+                !safeEquals(oldF.getPhone(), newF.getPhone()) ||
+                !safeEquals(oldF.getDepartment(), newF.getDepartment()) ||
+                !safeEquals(oldF.getPosition(), newF.getPosition());
+    }
+
+
     private void listenForFriendUpdates() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Log.d("ContactsFragment", "listenForFriendUpdates 호출, userId: " + currentUserId);  // ★추가
+        Log.d("ContactsFragment", "listenForFriendUpdates 호출, userId: " + currentUserId);
 
         db.collection("users")
                 .document(currentUserId)
@@ -337,10 +346,10 @@ public class ContactsFragment extends Fragment {
                     }
 
                     if (querySnapshot != null) {
-                        Log.d("ContactsFragment", "문서 변경 개수: " + querySnapshot.getDocumentChanges().size());  // ★추가
+                        Log.d("ContactsFragment", "문서 변경 개수: " + querySnapshot.getDocumentChanges().size());
 
                         for (DocumentChange dc : querySnapshot.getDocumentChanges()) {
-                            Log.d("ContactsFragment", "문서 변경 타입: " + dc.getType() + ", ID: " + dc.getDocument().getId()); // ★추가
+                            Log.d("ContactsFragment", "문서 변경 타입: " + dc.getType() + ", ID: " + dc.getDocument().getId());
 
                             if (dc.getType() == DocumentChange.Type.MODIFIED) {
                                 Friend updatedFriend = dc.getDocument().toObject(Friend.class);
@@ -349,21 +358,17 @@ public class ContactsFragment extends Fragment {
 
                                 Friend oldFriend = friendMap.get(friendId);
 
-                                boolean onlyFavoriteChanged = false;
+                                boolean showDot = false;
 
                                 if (isInitialLoadDone && oldFriend != null) {
-                                    onlyFavoriteChanged = oldFriend.isFavorite() != updatedFriend.isFavorite() &&
-                                            safeEquals(oldFriend.getName(), updatedFriend.getName()) &&
-                                            safeEquals(oldFriend.getEmail(), updatedFriend.getEmail()) &&
-                                            safeEquals(oldFriend.getPhone(), updatedFriend.getPhone()) &&
-                                            safeEquals(oldFriend.getDepartment(), updatedFriend.getDepartment()) &&
-                                            safeEquals(oldFriend.getPosition(), updatedFriend.getPosition());
-                                    Log.d("ContactsFragment", "onlyFavoriteChanged: " + onlyFavoriteChanged);
+                                    showDot = hasImportantChange(oldFriend, updatedFriend);
+                                    Log.d("ContactsFragment", "중요 정보 변경 여부 (dot 표시): " + showDot);
                                 }
 
+                                // 최신 데이터로 friendMap 갱신
                                 friendMap.put(friendId, updatedFriend);
 
-                                // ------------------- 여기부터 추가 -------------------
+                                // 리스트 업데이트
                                 favoriteList.removeIf(friend -> friend.getId().equals(friendId));
                                 contactList.removeIf(friend -> friend.getId().equals(friendId));
 
@@ -376,23 +381,23 @@ public class ContactsFragment extends Fragment {
                                 favoriteList.sort(Comparator.comparing(Friend::getName));
                                 contactList.sort(Comparator.comparing(Friend::getName));
                                 applyFilterToAdapters();
-                                // ------------------- 여기까지 추가 -------------------
 
-                                if (onlyFavoriteChanged) {
-                                    Log.d("ContactsFragment", "즐겨찾기 변경만 있어 dot 표시 생략");
+                                if (!showDot) {
+                                    Log.d("ContactsFragment", "Dot 생략 (중요 정보 변경 없음)");
                                     continue;
                                 }
 
-                                Log.d("ContactsFragment", "Dot ON (favorite): " + updatedFriend.getName());
+                                Log.d("ContactsFragment", "Dot ON → 알림 표시 대상: " + updatedFriend.getName());
                                 showAlertDot(friendId);
                             }
-
                         }
                     } else {
                         Log.d("ContactsFragment", "querySnapshot is null");
                     }
                 });
     }
+
+
 
 
 
@@ -421,10 +426,4 @@ public class ContactsFragment extends Fragment {
 
         applyFilterToAdapters();
     }
-
-
-
-
-
-
 }
