@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,7 +24,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ContactsFragment extends Fragment {
 
@@ -35,8 +38,10 @@ public class ContactsFragment extends Fragment {
     private List<Friend> contactList;
     private FirebaseFirestore db;
     private static final int REQUEST_VIEW_FRIEND = 1001;
-
     private EditText searchBar;
+    private Map<String, Friend> friendMap = new HashMap<>();
+    private boolean isInitialLoadDone = false;
+
 
     public ContactsFragment() {}
 
@@ -57,8 +62,9 @@ public class ContactsFragment extends Fragment {
         favoriteAdapter = new FriendsAdapter(new ArrayList<>(), new FriendsAdapter.OnFriendClickListener() {
             @Override
             public void onFriendClick(Friend friend) {
-                onFriendClick(friend);
+                ContactsFragment.this.onFriendClick(friend);
             }
+
 
             @Override
             public void onFavoriteToggled(Friend friend) {
@@ -105,6 +111,30 @@ public class ContactsFragment extends Fragment {
     }
 
     private void onFriendClick(Friend friend) {
+        if (friend == null || friend.getId() == null) return;
+
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users")
+                .document(currentUserId)
+                .collection("friends")
+                .document(friend.getId())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Friend fullFriend = documentSnapshot.toObject(Friend.class);
+                    if (fullFriend != null) {
+                        openFriendProfile(fullFriend);
+                    } else {
+                        Toast.makeText(requireContext(), "친구 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "데이터 불러오기 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void openFriendProfile(Friend friend) {
         FriendProfileFragment profileFragment = new FriendProfileFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("friend", friend);
@@ -116,6 +146,7 @@ public class ContactsFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
+
 
     private void loadFriendsFromFirestore() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -129,29 +160,42 @@ public class ContactsFragment extends Fragment {
                     if (task.isSuccessful()) {
                         favoriteList.clear();
                         contactList.clear();
+                        friendMap.clear(); // 기존 맵도 초기화
 
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             Friend friend = doc.toObject(Friend.class);
                             friend.setId(doc.getId());
+
+                            friendMap.put(friend.getId(), friend); // ✅ 초기 데이터 friendMap 저장
 
                             if (friend.isFavorite()) {
                                 favoriteList.add(friend);
                             } else {
                                 contactList.add(friend);
                             }
-                        }
 
-                        applyFilterToAdapters();
+                        }
+                        Log.d("ContactsFragment", "favoriteList size: " + favoriteList.size());
+                        Log.d("ContactsFragment", "contactList size: " + contactList.size());
+
+                        applyFilterToAdapters();   // ✅ RecyclerView 갱신
+                        isInitialLoadDone = true;  // ✅ dot 표시 감지 시작
+
                     } else {
                         Log.w("ContactsFragment", "Firestore 불러오기 실패", task.getException());
                     }
                 });
+
     }
 
     private void applyFilterToAdapters() {
         String query = searchBar.getText().toString();
         filterFriends(query);
+        Log.d("ContactsFragment", "favoriteAdapter item count: " + favoriteAdapter.getItemCount());
+        Log.d("ContactsFragment", "contactAdapter item count: " + contactAdapter.getItemCount());
     }
+
+
 
     private void filterFriends(String query) {
         String lowerCaseQuery = query.toLowerCase();
@@ -274,8 +318,14 @@ public class ContactsFragment extends Fragment {
 
         applyFilterToAdapters();
     }
+
+    private boolean safeEquals(String a, String b) {
+        return (a == null && b == null) || (a != null && a.equals(b));
+    }
+
     private void listenForFriendUpdates() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Log.d("ContactsFragment", "listenForFriendUpdates 호출, userId: " + currentUserId);  // ★추가
 
         db.collection("users")
                 .document(currentUserId)
@@ -287,23 +337,73 @@ public class ContactsFragment extends Fragment {
                     }
 
                     if (querySnapshot != null) {
+                        Log.d("ContactsFragment", "문서 변경 개수: " + querySnapshot.getDocumentChanges().size());  // ★추가
+
                         for (DocumentChange dc : querySnapshot.getDocumentChanges()) {
+                            Log.d("ContactsFragment", "문서 변경 타입: " + dc.getType() + ", ID: " + dc.getDocument().getId()); // ★추가
+
                             if (dc.getType() == DocumentChange.Type.MODIFIED) {
                                 Friend updatedFriend = dc.getDocument().toObject(Friend.class);
-                                updatedFriend.setId(dc.getDocument().getId()); // ID 설정
-                                showAlertDot(updatedFriend.getId());  // dot 표시 함수 호출
+                                String friendId = dc.getDocument().getId();
+                                updatedFriend.setId(friendId);
+
+                                Friend oldFriend = friendMap.get(friendId);
+
+                                boolean onlyFavoriteChanged = false;
+
+                                if (isInitialLoadDone && oldFriend != null) {
+                                    onlyFavoriteChanged = oldFriend.isFavorite() != updatedFriend.isFavorite() &&
+                                            safeEquals(oldFriend.getName(), updatedFriend.getName()) &&
+                                            safeEquals(oldFriend.getEmail(), updatedFriend.getEmail()) &&
+                                            safeEquals(oldFriend.getPhone(), updatedFriend.getPhone()) &&
+                                            safeEquals(oldFriend.getDepartment(), updatedFriend.getDepartment()) &&
+                                            safeEquals(oldFriend.getPosition(), updatedFriend.getPosition());
+                                    Log.d("ContactsFragment", "onlyFavoriteChanged: " + onlyFavoriteChanged);
+                                }
+
+                                friendMap.put(friendId, updatedFriend);
+
+                                // ------------------- 여기부터 추가 -------------------
+                                favoriteList.removeIf(friend -> friend.getId().equals(friendId));
+                                contactList.removeIf(friend -> friend.getId().equals(friendId));
+
+                                if (updatedFriend.isFavorite()) {
+                                    favoriteList.add(updatedFriend);
+                                } else {
+                                    contactList.add(updatedFriend);
+                                }
+
+                                favoriteList.sort(Comparator.comparing(Friend::getName));
+                                contactList.sort(Comparator.comparing(Friend::getName));
+                                applyFilterToAdapters();
+                                // ------------------- 여기까지 추가 -------------------
+
+                                if (onlyFavoriteChanged) {
+                                    Log.d("ContactsFragment", "즐겨찾기 변경만 있어 dot 표시 생략");
+                                    continue;
+                                }
+
+                                Log.d("ContactsFragment", "Dot ON (favorite): " + updatedFriend.getName());
+                                showAlertDot(friendId);
                             }
+
                         }
+                    } else {
+                        Log.d("ContactsFragment", "querySnapshot is null");
                     }
                 });
     }
+
+
+
     private void showAlertDot(String friendId) {
         boolean updated = false;
 
         for (Friend friend : contactList) {
             if (friend.getId().equals(friendId)) {
-                friend.setShowAlert(true);  // 🔔 알림 dot 표시
+                friend.setShowAlert(true);
                 updated = true;
+                Log.d("ContactsFragment", "Dot ON (contact): " + friend.getName());
                 break;
             }
         }
@@ -312,13 +412,19 @@ public class ContactsFragment extends Fragment {
             for (Friend friend : favoriteList) {
                 if (friend.getId().equals(friendId)) {
                     friend.setShowAlert(true);
+                    Log.d("ContactsFragment", "Dot ON (favorite): " + friend.getName());
+                    Log.d("ContactsFragment", "Friend ID: " + friend.getId() + ", showAlert: " + friend.shouldShowAlert());
                     break;
                 }
             }
         }
 
-        applyFilterToAdapters();  // RecyclerView 새로고침
+        applyFilterToAdapters();
     }
+
+
+
+
 
 
 }
