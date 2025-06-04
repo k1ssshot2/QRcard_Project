@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Business QaRd</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <string name="save">SAVE</string>
+    <string name="add">ADD</string>
+    <string name="username">User Name</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone</string>
+    <string name="department">Department</string>
+    <string name="position">Position</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <string name="password">Password</string>
+    <string name="edit">Edit</string>
+    <string name="confirmpassword">ConfirmPassword</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="signup">Signup</string>
+    <string name="delete">Delete</string>
+</resources>
