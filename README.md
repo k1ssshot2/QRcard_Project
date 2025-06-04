@@ -1,4 +1,4 @@
-# :identification_card:QRcode_BusinessCard
+# 🪪QRcode_BusinessCard
 ## 🚀 소개
 ### 프로젝트 소개
 **QRcard_Project**는 QR 코드를 활용한 **디지털 명함 기반 Android 연락처 앱**입니다.<br/><br/>
