@@ -124,6 +124,7 @@ public class ContactsFragment extends Fragment {
                 .addOnSuccessListener(documentSnapshot -> {
                     Friend fullFriend = documentSnapshot.toObject(Friend.class);
                     if (fullFriend != null) {
+                        fullFriend.setId(documentSnapshot.getId());
                         openFriendProfile(fullFriend);
                     } else {
                         Toast.makeText(requireContext(), "친구 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();

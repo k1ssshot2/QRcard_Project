@@ -3,6 +3,7 @@ package com.example.qrcardproject;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FriendProfileFragment extends Fragment {
@@ -81,25 +83,35 @@ public class FriendProfileFragment extends Fragment {
 
         // 삭제 버튼 클릭
         deleteButton.setOnClickListener(v -> {
-            if (friend == null) return;
+            if (friend == null || friend.getId() == null) {
+                Toast.makeText(getContext(), "삭제할 친구 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                Toast.makeText(getContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             new AlertDialog.Builder(requireContext())
                     .setTitle("삭제 확인")
                     .setMessage("이 친구를 삭제하시겠습니까?")
                     .setPositiveButton("삭제", (dialog, which) -> {
-                        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
                         db.collection("users")
-                                .document(currentUserId)
+                                .document(currentUser.getUid())
                                 .collection("friends")
                                 .document(friend.getId())
                                 .delete()
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(getContext(), "친구가 삭제되었습니다", Toast.LENGTH_SHORT).show();
-                                    getActivity().getSupportFragmentManager().popBackStack();
+                                    if (getActivity() != null) {
+                                        getActivity().getSupportFragmentManager().popBackStack();
+                                    }
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(getContext(), "삭제 실패: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Log.e("FriendProfileFragment", "삭제 실패", e);
                                 });
                     })
                     .setNegativeButton("취소", null)
