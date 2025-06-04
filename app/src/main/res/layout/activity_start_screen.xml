@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:padding="10dp"
-            android:text="Welome to \n Business Class "
+            android:text="Welcome to \n Business QaRd"
             android:textAlignment="center"
             android:textSize="35sp"
             android:textStyle="bold"
