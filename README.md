@@ -23,7 +23,6 @@
 ├── StartScreenActivity.java  
 ├── LoginScreenActivity.java  
 ├── RegisterActivity.java (Signup)  
-├── FriendProfileFragment.java  
 ├── fragments  
 │   ├── HomeFragment.java  
 │   │   └──AddScanFragment.java  
