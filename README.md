@@ -45,7 +45,7 @@
 | **Category** |                **Stack**                 |
 |:------------:|:----------------------------------------:|
 | **Back-end** | <img src="https://img.shields.io/badge/firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=white"> ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white) |
-| **Front-end** |     ![XML Layout](https://img.shields.io/badge/XML%20Layout-4285F4?style=for-the-badge&logo=android&logoColor=white) ![Activity](https://img.shields.io/badge/Activity-34A853?style=for-the-badge&logo=android&logoColor=white) ![Fragment](https://img.shields.io/badge/Fragment-34A853?style=for-the-badge&logo=android&logoColor=white)    |
+| **Front-end** |     ![XML](https://img.shields.io/badge/XML%20Layout-4285F4?style=for-the-badge&logo=android&logoColor=white) ![Activity](https://img.shields.io/badge/Activity-34A853?style=for-the-badge&logo=android&logoColor=white) ![Fragment](https://img.shields.io/badge/Fragment-34A853?style=for-the-badge&logo=android&logoColor=white)    |
 | **Language** |                   ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)                   |
 
 
